@@ -58,9 +58,9 @@ if [ -f "api/db/lamorenita.sqlite" ]; then
   echo ""
 fi
 
-# ── 1. Detener el contenedor API para no corromper la BD ───────
-echo "→ Deteniendo contenedor API..."
-docker compose stop api 2>/dev/null || true
+# ── 1. Detener la API para no corromper la BD ─────────────────
+echo "→ Deteniendo API..."
+pm2 stop casalamorenita-api 2>/dev/null || true
 
 # ── 2. Crear directorios si no existen ────────────────────────
 mkdir -p api/db public/uploads/gallery public/cache
@@ -70,14 +70,14 @@ echo "→ Restaurando datos desde $BACKUP_FILE..."
 tar -xzf "$BACKUP_FILE"
 echo "${GREEN}✔ Datos extraídos${NC}"
 
-# ── 4. Reiniciar el contenedor API ────────────────────────────
-echo "→ Reiniciando contenedor API..."
-docker compose start api
+# ── 4. Reiniciar la API ───────────────────────────────────────
+echo "→ Reiniciando API..."
+pm2 start casalamorenita-api 2>/dev/null || pm2 restart casalamorenita-api
 
 # Esperar a que la API esté lista
 echo "→ Esperando a que la API responda..."
 for i in $(seq 1 20); do
-  STATUS=$(docker compose exec -T api wget -qO- http://localhost:3000/api/health 2>/dev/null || true)
+  STATUS=$(curl -sf http://127.0.0.1:3000/api/health 2>/dev/null || true)
   echo "$STATUS" | grep -q '"ok":true' && break
   sleep 1
 done
@@ -95,7 +95,7 @@ echo "  Fotos subidas:  $FOTOS archivos WebP"
 echo ""
 
 # Health check final
-HEALTH=$(docker compose exec -T api wget -qO- http://localhost:3000/api/health 2>/dev/null || echo "no responde")
+HEALTH=$(curl -sf http://127.0.0.1:3000/api/health 2>/dev/null || echo "no responde")
 if echo "$HEALTH" | grep -q '"ok":true'; then
   echo "${GREEN}✔ API respondiendo correctamente.${NC}"
 else

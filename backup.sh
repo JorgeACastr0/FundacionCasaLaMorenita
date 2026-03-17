@@ -23,10 +23,8 @@ mkdir -p backups
 echo "→ Creando respaldo: $DEST"
 
 # Pausar escrituras SQLite haciendo un checkpoint WAL
-# (solo si la DB existe y los contenedores están corriendo)
-if docker compose ps api 2>/dev/null | grep -q "running"; then
-  docker compose exec -T api \
-    node -e "require('./db/database').getDb().pragma('wal_checkpoint(TRUNCATE)')" \
+if pm2 list 2>/dev/null | grep -q "casalamorenita-api"; then
+  node -e "require('$(pwd)/api/db/database').getDb().pragma('wal_checkpoint(TRUNCATE)')" \
     2>/dev/null || true
 fi
 
