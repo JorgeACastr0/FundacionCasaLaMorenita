@@ -1,7 +1,7 @@
 #!/bin/sh
 # ══════════════════════════════════════════════════════════════════
 #  save_and_exit.sh — Guardar todo antes de destruir el CT
-#
+#  Dentro de la carpeta /var/www/lamorenita
 #  Uso: ./save_and_exit.sh
 #
 #  Qué hace:

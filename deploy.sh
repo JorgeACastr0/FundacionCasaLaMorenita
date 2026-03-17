@@ -14,7 +14,7 @@
 
 set -e
 
-REPO_URL="${1:-}"
+REPO_URL="${1:-https://github.com/JorgeACastr0/FundacionCasaLaMorenita.git}"
 APP_DIR="${2:-casalamorenita}"
 DOMAIN="${3:-}"
 

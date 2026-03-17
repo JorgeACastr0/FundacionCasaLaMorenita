@@ -39,7 +39,7 @@ ssh root@IP_DEL_CT
 apk add --no-cache git
 
 # Clonar el repositorio
-git clone https://github.com/TU_USUARIO/TU_REPO.git casalamorenita
+git clone https://github.com/JorgeACastr0/FundacionCasaLaMorenita.git casalamorenita
 ```
 
 ### Opción B — Copiar con SCP (si no usas Git)
@@ -145,9 +145,9 @@ Si el proyecto ya está en un repo Git, puedes hacer todo lo anterior en un coma
 
 ```bash
 # En el CT — desde la consola SSH
-wget -qO deploy.sh https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/deploy.sh
+wget -qO deploy.sh https://raw.githubusercontent.com/JorgeACastr0/FundacionCasaLaMorenita/main/deploy.sh
 chmod +x deploy.sh
-./deploy.sh https://github.com/TU_USUARIO/TU_REPO.git casalamorenita tudominio.com
+./deploy.sh https://github.com/JorgeACastr0/FundacionCasaLaMorenita.git casalamorenita tudominio.com
 ```
 
 El script instala Docker, clona el repo, genera el JWT, crea los directorios y levanta los contenedores.
