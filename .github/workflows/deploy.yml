@@ -1,0 +1,50 @@
+# ══════════════════════════════════════════════════════════════════
+#  CI/CD — Fundación Hogar La Morenita
+#
+#  Trigger: cada push a la rama main
+#  Qué hace:
+#    1. Entra al CT por SSH
+#    2. Actualiza el código (git pull)
+#    3. Instala dependencias nuevas si las hay
+#    4. Reinicia la API (PM2)
+#    5. Recarga Nginx si cambió su config
+# ══════════════════════════════════════════════════════════════════
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy al CT
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Conectar al CT y desplegar ─────────────────────────
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key:      ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            APP="/var/www/casalamorenita"
+
+            echo "→ Actualizando código..."
+            git -C "$APP" pull --rebase
+
+            echo "→ Actualizando dependencias..."
+            cd "$APP/api"
+            npm install --omit=dev --silent
+
+            echo "→ Reiniciando API..."
+            pm2 restart casalamorenita-api
+
+            echo "→ Recargando Nginx..."
+            nginx -t && nginx -s reload
+
+            echo "✔ Deploy completado en $(date)"
