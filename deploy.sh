@@ -110,9 +110,24 @@ else
   ok ".env ya existe, no se modifica"
 fi
 
-# ── 7. Construir imágenes y arrancar contenedores ─────────────
+# ── 7. Deshabilitar BuildKit (no compatible con LXC sin nesting) ─
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+
+# Persistir en daemon.json para arranques futuros
+mkdir -p /etc/docker
+cat > /etc/docker/daemon.json <<'DOCKERCFG'
+{
+  "storage-driver": "vfs",
+  "features": { "buildkit": false }
+}
+DOCKERCFG
+rc-service docker restart
+sleep 3
+
+# ── 8. Construir imágenes y arrancar contenedores ─────────────
 echo "→ Construyendo imágenes Docker (puede tardar 2-4 min la primera vez)..."
-docker compose build --no-cache
+docker compose build
 ok "Imágenes construidas"
 
 echo "→ Arrancando contenedores..."
