@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fundación Hogar La Morenita - Cuidado integral y amoroso a adultos mayores en Cajicá, Cundinamarca. Atención especializada 24/7.">
+    <meta property="og:title" content="Fundación Hogar La Morenita">
+    <meta property="og:description" content="Cuidado con amor para adultos mayores en Cajicá, Cundinamarca.">
+    <meta property="og:type" content="website">
+    <title>Fundación Hogar La Morenita — Cuidado con Amor en Cajicá</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="sitio()" :class="{ 'no-scroll': lightbox.abierto || menuMovil }">
+
+    <!-- ══════════════════════════════════════
+         NAVBAR
+    ══════════════════════════════════════ -->
+    <header class="navbar" :class="{ 'navbar--scrolled': scrolled }">
+        <div class="navbar__inner">
+            <a href="#inicio" class="navbar__logo">
+                <img src="logoCasaMorenita.jpg" alt="Logo Hogar La Morenita" class="navbar__logo-img">
+                <span class="navbar__logo-text">Hogar La Morenita</span>
+            </a>
+
+            <nav class="navbar__links" :class="{ 'navbar__links--open': menuMovil }" aria-label="Navegación principal">
+                <a href="#inicio"         @click="menuMovil = false">Inicio</a>
+                <a href="#nosotros"       @click="menuMovil = false">Nosotros</a>
+                <a href="#cuidados"       @click="menuMovil = false">Cuidados</a>
+                <a href="#galeria"        @click="menuMovil = false">Galería</a>
+                <a href="#actividades"    @click="menuMovil = false">Actividades</a>
+                <a href="#testimonios"    @click="menuMovil = false">Testimonios</a>
+                <a href="#contacto" class="navbar__cta" @click="menuMovil = false">Contáctanos</a>
+            </nav>
+
+            <button class="navbar__burger" @click="menuMovil = !menuMovil" :aria-expanded="menuMovil" aria-label="Menú">
+                <span :class="{ 'activo': menuMovil }"></span>
+                <span :class="{ 'activo': menuMovil }"></span>
+                <span :class="{ 'activo': menuMovil }"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Overlay menú móvil -->
+    <div class="menu-overlay" :class="{ 'menu-overlay--visible': menuMovil }" @click="menuMovil = false"></div>
+
+
+    <main>
+
+        <!-- ══════════════════════════════════════
+             HERO
+        ══════════════════════════════════════ -->
+        <section id="inicio" class="hero">
+            <div class="hero__fondo">
+                <div class="hero__forma hero__forma--1"></div>
+                <div class="hero__forma hero__forma--2"></div>
+                <div class="hero__forma hero__forma--3"></div>
+            </div>
+            <div class="hero__contenido">
+                <div class="hero__texto">
+                    <span class="hero__tag">Cajicá, Cundinamarca</span>
+                    <h1 class="hero__titulo">
+                        Cuidado con <em>amor</em><br>para quienes más lo merecen
+                    </h1>
+                    <p class="hero__subtitulo">
+                        Brindamos atención integral, digna y amorosa a adultos mayores,
+                        con dedicación las 24 horas del día.
+                    </p>
+                    <div class="hero__botones">
+                        <a href="#cuidados" class="btn btn--primario">Conoce nuestros cuidados</a>
+                        <a href="#contacto" class="btn btn--secundario">Contáctanos</a>
+                    </div>
+                </div>
+                <div class="hero__imagen">
+                    <div class="hero__imagen-marco">
+                        <img src="logoCasaMorenita.jpg" alt="Fundación Hogar La Morenita" loading="eager">
+                    </div>
+                </div>
+            </div>
+            <a href="#nosotros" class="hero__scroll-indicator" aria-label="Desplazarse hacia abajo">
+                <span></span>
+            </a>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             ESTADÍSTICAS
+        ══════════════════════════════════════ -->
+        <div class="estadisticas">
+            <div class="estadisticas__inner">
+                <div class="estadistica" data-aos="fade-up" data-aos-delay="0">
+                    <span class="estadistica__numero" data-contador="10">0</span>
+                    <span class="estadistica__simbolo">+</span>
+                    <span class="estadistica__label">Años de servicio</span>
+                </div>
+                <div class="estadistica" data-aos="fade-up" data-aos-delay="100">
+                    <span class="estadistica__numero" data-contador="50">0</span>
+                    <span class="estadistica__simbolo">+</span>
+                    <span class="estadistica__label">Residentes atendidos</span>
+                </div>
+                <div class="estadistica" data-aos="fade-up" data-aos-delay="200">
+                    <span class="estadistica__numero">24/7</span>
+                    <span class="estadistica__label">Atención permanente</span>
+                </div>
+                <div class="estadistica" data-aos="fade-up" data-aos-delay="300">
+                    <span class="estadistica__numero">100%</span>
+                    <span class="estadistica__label">Con amor</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════
+             SOBRE NOSOTROS
+        ══════════════════════════════════════ -->
+        <section id="nosotros" class="seccion seccion--clara">
+            <div class="contenedor">
+                <div class="seccion__encabezado" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Quiénes somos</span>
+                    <h2>Sobre Nosotros</h2>
+                    <div class="seccion__linea"></div>
+                </div>
+
+                <div class="nosotros__grid">
+                    <div class="nosotros__card" data-aos="fade-right">
+                        <div class="nosotros__icono">
+                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4zm0 36c-8.8 0-16-7.2-16-16S15.2 8 24 8s16 7.2 16 16-7.2 16-16 16zm-2-26h4v12h-4zm0 16h4v4h-4z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3>Nuestra Misión</h3>
+                        <p>Brindar atención integral, digna y amorosa a los adultos mayores, promoviendo su bienestar físico, emocional y espiritual. Creamos un ambiente de respeto, seguridad y calidez, donde cada residente es valorado como persona única, respetando su historia y su dignidad.</p>
+                    </div>
+
+                    <div class="nosotros__card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="nosotros__icono">
+                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 6l4.9 9.9L40 17.6l-8 7.8 1.9 11-9.9-5.2-9.9 5.2 1.9-11-8-7.8 11.1-1.7L24 6z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3>Nuestra Visión</h3>
+                        <p>Ser reconocidos como hogar líder en el cuidado del adulto mayor, destacándonos por un servicio humano, ético y de excelencia. Construimos un espacio donde la vejez se vive con alegría, respeto y amor, inspirando esperanza en cada corazón.</p>
+                    </div>
+
+                    <div class="nosotros__card" data-aos="fade-left" data-aos-delay="200">
+                        <div class="nosotros__icono">
+                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36C14.06 40 6 31.94 6 24S14.06 8 24 8s18 8.06 18 16-8.06 16-18 16zm-1-8h2v2h-2zm.76-14.86c-.01 0-.02.01-.03.01L22 17c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2v6h-2v-7.86z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3>Nuestros Valores</h3>
+                        <p>Solidaridad, compasión, respeto y amor son los pilares de nuestro trabajo diario. Cada día es una oportunidad de brindar vida plena y acompañamiento humano a quienes confiaron en nosotros su etapa más valiosa.</p>
+                    </div>
+                </div>
+
+                <!-- Mapa -->
+                <div class="nosotros__ubicacion" data-aos="fade-up">
+                    <h3>📍 Nos encontramos en Cajicá, Cundinamarca</h3>
+                    <div class="nosotros__mapa">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31827.09030117236!2d-74.06099793889158!3d4.918386996471741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e40771022e32a75%3A0xeed830596f0db27a!2sCajic%C3%A1%2C%20Cundinamarca!5e0!3m2!1ses!2sco!4v1653331891095!5m2!1ses!2sco"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Ubicación Cajicá, Cundinamarca"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             NUESTROS CUIDADOS
+        ══════════════════════════════════════ -->
+        <section id="cuidados" class="seccion seccion--oscura">
+            <div class="contenedor">
+                <div class="seccion__encabezado seccion__encabezado--claro" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Lo que ofrecemos</span>
+                    <h2>Nuestros Cuidados</h2>
+                    <div class="seccion__linea seccion__linea--claro"></div>
+                    <p class="seccion__subtitulo">Tratamos a cada residente con cariño, paciencia y dignidad, como parte de nuestra familia.</p>
+                </div>
+
+                <div class="cuidados__grid">
+                    <div class="cuidado__card" data-aos="zoom-in" data-aos-delay="0">
+                        <div class="cuidado__icono">
+                            <svg viewBox="0 0 48 48" fill="none"><path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm2 30h-4V22h4v12zm0-16h-4v-4h4v4z" fill="currentColor"/></svg>
+                        </div>
+                        <h3>Atención 24/7</h3>
+                        <p>Personal profesional y amoroso disponible las 24 horas del día, los 7 días de la semana, para atender cada necesidad.</p>
+                    </div>
+
+                    <div class="cuidado__card" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="cuidado__icono">
+                            <svg viewBox="0 0 48 48" fill="none"><path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm4 22h-3v3a1 1 0 01-2 0v-3h-3a1 1 0 010-2h3v-3a1 1 0 012 0v3h3a1 1 0 010 2z" fill="currentColor"/></svg>
+                        </div>
+                        <h3>Atención Médica</h3>
+                        <p>Seguimiento médico especializado, manejo de medicamentos y atención a condiciones como Alzheimer y Parkinson.</p>
+                    </div>
+
+                    <div class="cuidado__card" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="cuidado__icono">
+                            <svg viewBox="0 0 48 48" fill="none"><path d="M38 12H10a2 2 0 00-2 2v24a2 2 0 002 2h28a2 2 0 002-2V14a2 2 0 00-2-2zM16 18h16v2H16v-2zm0 6h16v2H16v-2zm0 6h10v2H16v-2z" fill="currentColor"/></svg>
+                        </div>
+                        <h3>Actividades Lúdicas</h3>
+                        <p>Actividades recreativas y terapéuticas adaptadas: manualidades, música, ejercicios, juegos y mucho más.</p>
+                    </div>
+
+                    <div class="cuidado__card" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="cuidado__icono">
+                            <svg viewBox="0 0 48 48" fill="none"><path d="M24 6C14.06 6 6 14.06 6 24s8.06 18 18 18 18-8.06 18-18S33.94 6 24 6zm0 4a14 14 0 110 28A14 14 0 0124 10zm-4 8v12l10-6-10-6z" fill="currentColor"/></svg>
+                        </div>
+                        <h3>Nutrición Balanceada</h3>
+                        <p>Alimentación adaptada a las necesidades médicas y gustos de cada residente, preparada con amor y calidad.</p>
+                    </div>
+
+                    <div class="cuidado__card" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="cuidado__icono">
+                            <svg viewBox="0 0 48 48" fill="none"><path d="M24 4l-3 9H10l8 6-3 9 9-6 9 6-3-9 8-6H27L24 4z" fill="currentColor"/></svg>
+                        </div>
+                        <h3>Apoyo Espiritual</h3>
+                        <p>Acompañamiento espiritual y emocional, respetando las creencias y tradiciones de cada residente.</p>
+                    </div>
+
+                    <div class="cuidado__card" data-aos="zoom-in" data-aos-delay="500">
+                        <div class="cuidado__icono">
+                            <svg viewBox="0 0 48 48" fill="none"><path d="M32 18c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8 8-3.6 8-8zm-8 4a4 4 0 110-8 4 4 0 010 8zm0 4c-5.33 0-16 2.67-16 8v4h32v-4c0-5.33-10.67-8-16-8z" fill="currentColor"/></svg>
+                        </div>
+                        <h3>Acompañamiento Familiar</h3>
+                        <p>Informamos y acompañamos a las familias en cada etapa, manteniendo una comunicación abierta y transparente.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             GALERÍA
+        ══════════════════════════════════════ -->
+        <section id="galeria" class="seccion seccion--clara">
+            <div class="contenedor">
+                <div class="seccion__encabezado" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Momentos especiales</span>
+                    <h2>Galería</h2>
+                    <div class="seccion__linea"></div>
+                    <p class="seccion__subtitulo">Cada foto cuenta la historia de un hogar lleno de amor.</p>
+                </div>
+
+                <!-- Grid galería dinámica -->
+                <div class="galeria__grid" id="galeria-grid">
+                    <!-- Se carga desde la API o usa las fotos estáticas -->
+                    <div class="galeria__item" data-aos="fade-up" data-aos-delay="0"
+                         @click="abrirLightbox('Domingoderamos.jpeg', 'Domingo de Ramos')">
+                        <img src="Domingoderamos.jpeg" alt="Domingo de Ramos" loading="lazy">
+                        <div class="galeria__overlay">
+                            <span class="galeria__overlay-icono">🔍</span>
+                            <span class="galeria__overlay-titulo">Domingo de Ramos</span>
+                        </div>
+                    </div>
+                    <div class="galeria__item" data-aos="fade-up" data-aos-delay="100"
+                         @click="abrirLightbox('alfonsoEsposaDiaMuejr.jpg', 'Día de la Mujer')">
+                        <img src="alfonsoEsposaDiaMuejr.jpg" alt="Día de la Mujer" loading="lazy">
+                        <div class="galeria__overlay">
+                            <span class="galeria__overlay-icono">🔍</span>
+                            <span class="galeria__overlay-titulo">Día de la Mujer</span>
+                        </div>
+                    </div>
+                    <div class="galeria__item galeria__item--grande" data-aos="fade-up" data-aos-delay="200"
+                         @click="abrirLightbox('AlmuerzoDiadelaMujer.jpeg', 'Almuerzo Día de la Mujer')">
+                        <img src="AlmuerzoDiadelaMujer.jpeg" alt="Almuerzo Día de la Mujer" loading="lazy">
+                        <div class="galeria__overlay">
+                            <span class="galeria__overlay-icono">🔍</span>
+                            <span class="galeria__overlay-titulo">Almuerzo Día de la Mujer</span>
+                        </div>
+                    </div>
+                    <div class="galeria__item" data-aos="fade-up" data-aos-delay="300"
+                         @click="abrirLightbox('lilianaJhonDiaMujer.jpg', 'Celebración Día de la Mujer')">
+                        <img src="lilianaJhonDiaMujer.jpg" alt="Celebración Día de la Mujer" loading="lazy">
+                        <div class="galeria__overlay">
+                            <span class="galeria__overlay-icono">🔍</span>
+                            <span class="galeria__overlay-titulo">Celebración</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="galeria__ver-mas" data-aos="fade-up">
+                    <button class="btn btn--primario" onclick="document.getElementById('galeria-grid').classList.toggle('galeria__grid--expandida')">
+                        Ver todas las fotos
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             ACTIVIDADES
+        ══════════════════════════════════════ -->
+        <section id="actividades" class="seccion seccion--blanca">
+            <div class="contenedor">
+                <div class="seccion__encabezado" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Día a día</span>
+                    <h2>Nuestras Actividades</h2>
+                    <div class="seccion__linea"></div>
+                    <p class="seccion__subtitulo">La vida en La Morenita está llena de alegría, color y momentos únicos.</p>
+                </div>
+
+                <div class="actividades__grid" id="actividades-lista">
+                    <!-- Cargado dinámicamente por JS -->
+                    <div class="actividad__card" data-aos="fade-up" data-aos-delay="0">
+                        <div class="actividad__fecha">
+                            <span class="actividad__dia">08</span>
+                            <span class="actividad__mes">Mar</span>
+                        </div>
+                        <div class="actividad__info">
+                            <h4>Día de la Mujer</h4>
+                            <p>Celebramos con alegría a nuestras residentes con un almuerzo especial, flores y mucho amor.</p>
+                        </div>
+                        <div class="actividad__categoria">Celebración</div>
+                    </div>
+                    <div class="actividad__card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="actividad__fecha">
+                            <span class="actividad__dia">02</span>
+                            <span class="actividad__mes">Abr</span>
+                        </div>
+                        <div class="actividad__info">
+                            <h4>Domingo de Ramos</h4>
+                            <p>Procesión y celebración religiosa con todos los residentes, compartiendo en fe y comunidad.</p>
+                        </div>
+                        <div class="actividad__categoria">Espiritual</div>
+                    </div>
+                    <div class="actividad__card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="actividad__fecha">
+                            <span class="actividad__dia">15</span>
+                            <span class="actividad__mes">Abr</span>
+                        </div>
+                        <div class="actividad__info">
+                            <h4>Taller de Manualidades</h4>
+                            <p>Sesión creativa semanal donde los residentes expresan su arte y creatividad con materiales coloridos.</p>
+                        </div>
+                        <div class="actividad__categoria">Recreación</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             REDES SOCIALES FEED
+        ══════════════════════════════════════ -->
+        <section id="redes" class="seccion seccion--primario">
+            <div class="contenedor">
+                <div class="seccion__encabezado seccion__encabezado--claro" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Síguenos</span>
+                    <h2>En Redes Sociales</h2>
+                    <div class="seccion__linea seccion__linea--claro"></div>
+                    <p class="seccion__subtitulo">Compartimos cada momento especial de nuestra familia.</p>
+                </div>
+
+                <div class="redes__feed" id="social-feed">
+                    <!-- Cargado desde /cache/social_feed.json -->
+                    <div class="redes__vacio" id="social-placeholder">
+                        <p>Cargando publicaciones...</p>
+                    </div>
+                </div>
+
+                <div class="redes__botones" data-aos="fade-up">
+                    <a href="https://www.facebook.com/" target="_blank" rel="noopener" class="btn btn--facebook" data-social="facebook">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" fill="currentColor"/></svg>
+                        Seguir en Facebook
+                    </a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="btn btn--instagram" data-social="instagram">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/></svg>
+                        Seguir en Instagram
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             TESTIMONIOS
+        ══════════════════════════════════════ -->
+        <section id="testimonios" class="seccion seccion--clara">
+            <div class="contenedor">
+                <div class="seccion__encabezado" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Lo que dicen</span>
+                    <h2>Testimonios</h2>
+                    <div class="seccion__linea"></div>
+                </div>
+
+                <div class="swiper testimonios-swiper" data-aos="fade-up">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="testimonio__card">
+                                <div class="testimonio__comillas">"</div>
+                                <p class="testimonio__texto">La atención que ha recibido mi padre ha sido excepcional. El personal es cariñoso y profesional. Estamos muy agradecidos con toda la familia de La Morenita.</p>
+                                <div class="testimonio__autor">
+                                    <div class="testimonio__avatar">MR</div>
+                                    <div>
+                                        <strong>María Rodríguez</strong>
+                                        <span>Familiar de residente</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testimonio__card">
+                                <div class="testimonio__comillas">"</div>
+                                <p class="testimonio__texto">Después de visitar varios hogares, encontramos en La Morenita un verdadero hogar para mi abuela. Aquí no es un paciente más, es parte de una familia.</p>
+                                <div class="testimonio__autor">
+                                    <div class="testimonio__avatar">CJ</div>
+                                    <div>
+                                        <strong>Carlos Jiménez</strong>
+                                        <span>Familiar de residente</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testimonio__card">
+                                <div class="testimonio__comillas">"</div>
+                                <p class="testimonio__texto">Mi madre ha mejorado notablemente desde que está en La Morenita. Las actividades la mantienen activa y feliz. Gracias por tanto amor.</p>
+                                <div class="testimonio__autor">
+                                    <div class="testimonio__avatar">AM</div>
+                                    <div>
+                                        <strong>Ana Martínez</strong>
+                                        <span>Familiar de residente</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             CÓMO AYUDAR
+        ══════════════════════════════════════ -->
+        <section id="ayudar" class="seccion seccion--blanca">
+            <div class="contenedor">
+                <div class="seccion__encabezado" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Únete</span>
+                    <h2>Cómo Ayudar</h2>
+                    <div class="seccion__linea"></div>
+                    <p class="seccion__subtitulo">Tu tiempo y generosidad hacen una diferencia enorme en la vida de nuestros residentes.</p>
+                </div>
+
+                <div class="ayuda__grid">
+                    <div class="ayuda__card" data-aos="fade-right">
+                        <div class="ayuda__icono">🤝</div>
+                        <h3>Voluntariado</h3>
+                        <p>Únete a nuestro equipo de amor y servicio. Acompaña a los abuelos, organiza actividades o apoya en lo que más necesitamos. Tu tiempo es el regalo más valioso.</p>
+                        <a href="#contacto" class="btn btn--primario">Quiero ser voluntario</a>
+                    </div>
+                    <div class="ayuda__card ayuda__card--destacada" data-aos="fade-up" data-aos-delay="100">
+                        <div class="ayuda__icono">❤️</div>
+                        <h3>Donaciones</h3>
+                        <p>Con tu apoyo podemos mejorar la infraestructura, las actividades y la calidad de vida de nuestros residentes. Cada aporte, por pequeño que sea, transforma vidas.</p>
+                        <a href="#contacto" class="btn btn--secundario">Quiero donar</a>
+                    </div>
+                    <div class="ayuda__card" data-aos="fade-left" data-aos-delay="200">
+                        <div class="ayuda__icono">📣</div>
+                        <h3>Difunde</h3>
+                        <p>Comparte nuestra labor en redes sociales y ayúdanos a llegar a más familias que puedan necesitar nuestros servicios o quieran sumarse a nuestra causa.</p>
+                        <a href="#redes" class="btn btn--primario">Ver redes sociales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             CONTACTO
+        ══════════════════════════════════════ -->
+        <section id="contacto" class="seccion seccion--clara">
+            <div class="contenedor">
+                <div class="seccion__encabezado" data-aos="fade-up">
+                    <span class="seccion__etiqueta">Estamos aquí</span>
+                    <h2>Contáctanos</h2>
+                    <div class="seccion__linea"></div>
+                </div>
+
+                <div class="contacto__grid">
+                    <!-- Info + Redes -->
+                    <div class="contacto__info" data-aos="fade-right">
+                        <h3>Información de Contacto</h3>
+
+                        <ul class="contacto__lista">
+                            <li>
+                                <span class="contacto__icono">📍</span>
+                                <div>
+                                    <strong>Dirección</strong>
+                                    <span>Cajicá, Cundinamarca, Colombia</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="contacto__icono">📞</span>
+                                <div>
+                                    <strong>Teléfono</strong>
+                                    <a href="tel:+573146403147">+57 314 640 3147</a>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="contacto__icono">📱</span>
+                                <div>
+                                    <strong>Celular</strong>
+                                    <a href="tel:+573124481470">+57 312 448 1470</a>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="contacto__icono">✉️</span>
+                                <div>
+                                    <strong>Correo</strong>
+                                    <a href="mailto:hogarelamorenita@gmail.com">hogarelamorenita@gmail.com</a>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <h3 class="contacto__redes-titulo">Nuestras Redes Sociales</h3>
+                        <div class="contacto__redes">
+                            <a href="https://api.whatsapp.com/send?phone=573146403147&text=Hola%2C%20quiero%20información%20sobre%20Casa%20Hogar%20La%20Morenita."
+                               target="_blank" rel="noopener" class="red-social red-social--whatsapp" data-social="whatsapp">
+                                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="currentColor"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.054 23.5l5.79-1.519A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.497-5.2-1.366l-.372-.22-3.855 1.012 1.031-3.76-.242-.388A9.97 9.97 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="currentColor"/></svg>
+                                <span>WhatsApp</span>
+                            </a>
+                            <a href="https://www.facebook.com/" target="_blank" rel="noopener" class="red-social red-social--facebook" data-social="facebook">
+                                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" fill="currentColor"/></svg>
+                                <span>Facebook</span>
+                            </a>
+                            <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="red-social red-social--instagram" data-social="instagram">
+                                <svg viewBox="0 0 24 24" width="24" height="24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2.5"/></svg>
+                                <span>Instagram</span>
+                            </a>
+                            <a href="https://www.tiktok.com/" target="_blank" rel="noopener" class="red-social red-social--tiktok" data-social="tiktok">
+                                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z" fill="currentColor"/></svg>
+                                <span>TikTok</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Formulario -->
+                    <div class="contacto__formulario" data-aos="fade-left">
+                        <h3>Envíanos un mensaje</h3>
+                        <form id="form-contacto" @submit.prevent="enviarFormulario($event)">
+                            <div class="form__grupo">
+                                <label for="nombre">Nombre completo *</label>
+                                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+                            </div>
+                            <div class="form__grupo">
+                                <label for="email">Correo electrónico *</label>
+                                <input type="email" id="email" name="email" required placeholder="tucorreo@ejemplo.com">
+                            </div>
+                            <div class="form__grupo">
+                                <label for="telefono">Teléfono <span class="form__opcional">(opcional)</span></label>
+                                <input type="tel" id="telefono" name="telefono" placeholder="+57 300 000 0000">
+                            </div>
+                            <div class="form__grupo">
+                                <label for="asunto">Asunto *</label>
+                                <select id="asunto" name="asunto" required>
+                                    <option value="">Selecciona un asunto</option>
+                                    <option value="informacion">Información sobre servicios</option>
+                                    <option value="ingreso">Proceso de ingreso</option>
+                                    <option value="voluntariado">Voluntariado</option>
+                                    <option value="donacion">Donaciones</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form__grupo">
+                                <label for="mensaje">Mensaje *</label>
+                                <textarea id="mensaje" name="mensaje" rows="5" required placeholder="Cuéntanos cómo podemos ayudarte..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn--primario btn--bloque" id="btn-enviar">
+                                <span class="btn-texto">Enviar mensaje</span>
+                                <span class="btn-cargando" style="display:none">Enviando...</span>
+                            </button>
+                            <div id="form-exito" class="form__exito" style="display:none">
+                                ✅ Mensaje enviado. Nos comunicaremos pronto contigo.
+                            </div>
+                            <div id="form-error" class="form__error" style="display:none">
+                                ❌ Ocurrió un error. Por favor escríbenos por WhatsApp.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ══════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer__inner">
+            <div class="footer__marca">
+                <img src="logoCasaMorenita.jpg" alt="Logo Hogar La Morenita" class="footer__logo">
+                <h3>Fundación Hogar La Morenita</h3>
+                <p>Cuidado con amor en Cajicá</p>
+            </div>
+            <div class="footer__nav">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#nosotros">Sobre Nosotros</a></li>
+                    <li><a href="#cuidados">Nuestros Cuidados</a></li>
+                    <li><a href="#galeria">Galería</a></li>
+                    <li><a href="#ayudar">Cómo Ayudar</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer__contacto">
+                <h4>Contacto</h4>
+                <p>📍 Cajicá, Cundinamarca</p>
+                <p>📞 <a href="tel:+573146403147">+57 314 640 3147</a></p>
+                <p>✉️ <a href="mailto:hogarelamorenita@gmail.com">hogarelamorenita@gmail.com</a></p>
+            </div>
+            <div class="footer__redes">
+                <h4>Síguenos</h4>
+                <div class="footer__redes-iconos">
+                    <a href="https://api.whatsapp.com/send?phone=573146403147" target="_blank" rel="noopener" aria-label="WhatsApp" data-social="whatsapp">
+                        <svg viewBox="0 0 24 24" width="22"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.054 23.5l5.79-1.519A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.497-5.2-1.366l-.372-.22-3.855 1.012 1.031-3.76-.242-.388A9.97 9.97 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="currentColor"/></svg>
+                    </a>
+                    <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" data-social="facebook">
+                        <svg viewBox="0 0 24 24" width="22"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" fill="currentColor"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" data-social="instagram">
+                        <svg viewBox="0 0 24 24" width="22"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2.5"/></svg>
+                    </a>
+                    <a href="https://www.tiktok.com/" target="_blank" rel="noopener" aria-label="TikTok" data-social="tiktok">
+                        <svg viewBox="0 0 24 24" width="22"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z" fill="currentColor"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer__fondo">
+            <p>&copy; 2025 Fundación Hogar La Morenita. Todos los derechos reservados. Cajicá, Colombia.</p>
+        </div>
+    </footer>
+
+
+    <!-- ══════════════════════════════════════
+         LIGHTBOX MODAL
+    ══════════════════════════════════════ -->
+    <div class="lightbox" :class="{ 'lightbox--abierto': lightbox.abierto }"
+         @click.self="cerrarLightbox()" @keydown.escape.window="cerrarLightbox()">
+        <button class="lightbox__cerrar" @click="cerrarLightbox()" aria-label="Cerrar">✕</button>
+        <div class="lightbox__contenido">
+            <img :src="lightbox.src" :alt="lightbox.alt" class="lightbox__imagen">
+            <p class="lightbox__pie" x-text="lightbox.alt"></p>
+        </div>
+        <button class="lightbox__nav lightbox__nav--prev" @click="navegarLightbox(-1)" aria-label="Anterior">❮</button>
+        <button class="lightbox__nav lightbox__nav--next" @click="navegarLightbox(1)" aria-label="Siguiente">❯</button>
+    </div>
+
+
+    <!-- WhatsApp flotante -->
+    <a href="https://api.whatsapp.com/send?phone=573146403147&text=Hola%2C%20quisiera%20información%20sobre%20Casa%20Hogar%20La%20Morenita."
+       class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp" data-social="whatsapp">
+        <svg viewBox="0 0 24 24" width="30" height="30">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.054 23.5l5.79-1.519A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.497-5.2-1.366l-.372-.22-3.855 1.012 1.031-3.76-.242-.388A9.97 9.97 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="white"/>
+        </svg>
+        <span class="whatsapp-float__tooltip">¡Escríbenos!</span>
+    </a>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

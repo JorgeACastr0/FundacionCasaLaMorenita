@@ -1,0 +1,50 @@
+services:
+
+  # ── API Node.js ──────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+    volumes:
+      # Persistencia: base de datos SQLite
+      - ./api/db:/app/db
+      # Persistencia: imágenes subidas
+      - ./public/uploads:/public/uploads
+      # Persistencia: caché del feed social
+      - ./public/cache:/public/cache
+    networks:
+      - interna
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Nginx — archivos estáticos + proxy ──────────────────────
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      # Servir imágenes subidas directamente sin pasar por Node
+      - ./public/uploads:/var/www/html/uploads:ro
+      # Servir caché del feed social
+      - ./public/cache:/var/www/html/cache:ro
+    networks:
+      - interna
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  interna:
+    driver: bridge

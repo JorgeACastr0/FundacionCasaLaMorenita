@@ -1,0 +1,31 @@
+# Dependencias (se instalan dentro del build)
+api/node_modules
+
+# Variables de entorno y secretos
+api/.env
+.env
+
+# Base de datos local (se monta en producción)
+api/db/*.sqlite
+api/db/*.sqlite-wal
+api/db/*.sqlite-shm
+
+# Archivos subidos localmente (se montan en producción)
+public/uploads/gallery/
+
+# Caché social local
+public/cache/
+
+# Control de versiones
+.git
+.gitignore
+
+# Documentación
+*.md
+ARQUITECTURA.md
+DEPLOY.md
+
+# Archivos temporales / sistema
+*.log
+.DS_Store
+Thumbs.db

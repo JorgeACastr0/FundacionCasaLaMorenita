@@ -1,0 +1,29 @@
+# ── Dependencias ──────────────────────────────────────────────
+api/node_modules/
+
+# ── Secretos y variables de entorno ───────────────────────────
+api/.env
+.env
+
+# ── Base de datos (datos de producción, no van en el repo) ────
+api/db/*.sqlite
+api/db/*.sqlite-wal
+api/db/*.sqlite-shm
+
+# ── Archivos subidos por usuarios ─────────────────────────────
+public/uploads/gallery/
+
+# ── Caché generada automáticamente ────────────────────────────
+public/cache/
+
+# ── Sistema operativo ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Backups locales ───────────────────────────────────────────
+backups/

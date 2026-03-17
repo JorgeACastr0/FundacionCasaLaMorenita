@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin — Hogar La Morenita</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="adminApp()" x-init="iniciar()">
+
+<!-- ══════════════════════════════════════
+     PANTALLA DE LOGIN
+══════════════════════════════════════ -->
+<div class="login-screen" x-show="!autenticado" x-cloak>
+    <div class="login-card">
+        <div class="login-logo">
+            <img src="../logoCasaMorenita.jpg" alt="Logo">
+        </div>
+        <h1>Panel Administrativo</h1>
+        <p class="login-subtitulo">Fundación Hogar La Morenita</p>
+
+        <form @submit.prevent="login()" class="login-form">
+            <div class="campo">
+                <label>Usuario</label>
+                <input type="text" x-model="loginForm.usuario" placeholder="Tu usuario" required autocomplete="username">
+            </div>
+            <div class="campo">
+                <label>Contraseña</label>
+                <input type="password" x-model="loginForm.password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <div class="login-error" x-show="loginError" x-text="loginError"></div>
+            <button type="submit" class="btn-primario btn-bloque" :disabled="cargando">
+                <span x-show="!cargando">Ingresar</span>
+                <span x-show="cargando">Verificando...</span>
+            </button>
+        </form>
+
+        <!-- Primer uso: crear admin -->
+        <div class="primer-uso" x-show="mostrarCrearAdmin">
+            <hr>
+            <p><strong>Primera configuración:</strong> crea tu cuenta de administrador.</p>
+            <form @submit.prevent="crearAdmin()">
+                <div class="campo">
+                    <label>Nuevo usuario</label>
+                    <input type="text" x-model="nuevoAdmin.usuario" placeholder="admin" required>
+                </div>
+                <div class="campo">
+                    <label>Contraseña (mín. 8 caracteres)</label>
+                    <input type="password" x-model="nuevoAdmin.password" placeholder="••••••••" minlength="8" required>
+                </div>
+                <button type="submit" class="btn-secundario btn-bloque" :disabled="cargando">Crear cuenta</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LAYOUT PRINCIPAL (autenticado)
+══════════════════════════════════════ -->
+<div class="admin-layout" x-show="autenticado" x-cloak>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" :class="{ 'sidebar--abierto': sidebarMovil }">
+        <div class="sidebar-logo">
+            <img src="../logoCasaMorenita.jpg" alt="Logo">
+            <div>
+                <span class="sidebar-nombre">La Morenita</span>
+                <span class="sidebar-sub">Panel Admin</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button @click="cambiarVista('dashboard')"   :class="{ activo: vista === 'dashboard' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/></svg>
+                Dashboard
+            </button>
+            <button @click="cambiarVista('galeria')"     :class="{ activo: vista === 'galeria' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="currentColor"/></svg>
+                Galería
+                <span class="badge" x-show="stats.fotos_galeria" x-text="stats.fotos_galeria"></span>
+            </button>
+            <button @click="cambiarVista('actividades')" :class="{ activo: vista === 'actividades' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" fill="currentColor"/></svg>
+                Actividades
+            </button>
+            <button @click="cambiarVista('mensajes')"    :class="{ activo: vista === 'mensajes' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" fill="currentColor"/></svg>
+                Mensajes
+                <span class="badge badge--rojo" x-show="stats.mensajes_nuevos > 0" x-text="stats.mensajes_nuevos"></span>
+            </button>
+            <button @click="cambiarVista('testimonios')"  :class="{ activo: vista === 'testimonios' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6V9h12v3zm0-4H6V5h12v3z" fill="currentColor"/></svg>
+                Testimonios
+                <span class="badge badge--gris" x-show="stats.testimonios_total" x-text="stats.testimonios_total"></span>
+            </button>
+            <button @click="cambiarVista('configuracion')" :class="{ activo: vista === 'configuracion' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/></svg>
+                Configuración
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span x-text="'Hola, ' + (adminUsuario || 'Admin')"></span>
+            <button @click="logout()" class="btn-logout" title="Cerrar sesión">
+                <svg viewBox="0 0 24 24" width="18"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" fill="currentColor"/></svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Overlay sidebar móvil -->
+    <div class="sidebar-overlay" :class="{ activo: sidebarMovil }" @click="sidebarMovil = false"></div>
+
+    <!-- Área principal -->
+    <main class="admin-main">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="topbar-burger" @click="sidebarMovil = !sidebarMovil">
+                <svg viewBox="0 0 24 24" width="24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" fill="currentColor"/></svg>
+            </button>
+            <div class="topbar-titulo">
+                <span x-show="vista==='dashboard'">Dashboard</span>
+                <span x-show="vista==='galeria'">Gestionar Galería</span>
+                <span x-show="vista==='actividades'">Gestionar Actividades</span>
+                <span x-show="vista==='mensajes'">Mensajes de Contacto</span>
+                <span x-show="vista==='testimonios'">Gestionar Testimonios</span>
+                <span x-show="vista==='configuracion'">Configuración del Sitio</span>
+            </div>
+            <a href="../index.html" target="_blank" class="btn-ver-sitio">
+                <svg viewBox="0 0 24 24" width="16"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" fill="currentColor"/></svg>
+                Ver sitio
+            </a>
+        </header>
+
+        <!-- Toast de éxito/error -->
+        <div class="toast toast--exito"  x-show="toastExito"  x-transition x-text="toastExito"></div>
+        <div class="toast toast--error"  x-show="toastError"  x-transition x-text="toastError"></div>
+
+        <div class="admin-contenido">
+
+            <!-- ══════════ DASHBOARD ══════════ -->
+            <section x-show="vista === 'dashboard'">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icono stat-card__icono--azul">
+                            <svg viewBox="0 0 24 24" width="28"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="currentColor"/></svg>
+                        </div>
+                        <div>
+                            <div class="stat-card__numero" x-text="stats.fotos_galeria ?? '–'"></div>
+                            <div class="stat-card__label">Fotos en galería</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icono stat-card__icono--verde">
+                            <svg viewBox="0 0 24 24" width="28"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" fill="currentColor"/></svg>
+                        </div>
+                        <div>
+                            <div class="stat-card__numero" x-text="stats.actividades_total ?? '–'"></div>
+                            <div class="stat-card__label">Actividades</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icono stat-card__icono--amarillo">
+                            <svg viewBox="0 0 24 24" width="28"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" fill="currentColor"/></svg>
+                        </div>
+                        <div>
+                            <div class="stat-card__numero" x-text="stats.mensajes_total ?? '–'"></div>
+                            <div class="stat-card__label">Mensajes totales</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icono stat-card__icono--azul">
+                            <svg viewBox="0 0 24 24" width="28"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6V9h12v3zm0-4H6V5h12v3z" fill="currentColor"/></svg>
+                        </div>
+                        <div>
+                            <div class="stat-card__numero" x-text="stats.testimonios_total ?? '–'"></div>
+                            <div class="stat-card__label">Testimonios</div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card--alerta" x-show="stats.mensajes_nuevos > 0">
+                        <div class="stat-card__icono stat-card__icono--rojo">
+                            <svg viewBox="0 0 24 24" width="28"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/></svg>
+                        </div>
+                        <div>
+                            <div class="stat-card__numero" x-text="stats.mensajes_nuevos"></div>
+                            <div class="stat-card__label">Sin leer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimos mensajes en dashboard -->
+                <div class="card" x-show="ultimosMensajes.length > 0">
+                    <div class="card-header">
+                        <h3>Últimos mensajes</h3>
+                        <button class="btn-link" @click="cambiarVista('mensajes')">Ver todos →</button>
+                    </div>
+                    <table class="tabla">
+                        <thead>
+                            <tr><th>Nombre</th><th>Asunto</th><th>Fecha</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="m in ultimosMensajes.slice(0,5)" :key="m.id">
+                                <tr :class="{ 'fila--nueva': !m.leido }">
+                                    <td x-text="m.nombre"></td>
+                                    <td x-text="m.asunto"></td>
+                                    <td x-text="formatFecha(m.creado_en)"></td>
+                                    <td>
+                                        <span class="badge" :class="m.leido ? 'badge--gris' : 'badge--verde'">
+                                            <span x-text="m.leido ? 'Leído' : 'Nuevo'"></span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-vacio" x-show="!stats.fotos_galeria && !stats.actividades_total">
+                    <p>👋 Bienvenido al panel. Empieza subiendo fotos a la <button class="btn-link" @click="cambiarVista('galeria')">galería</button>.</p>
+                </div>
+            </section>
+
+
+            <!-- ══════════ GALERÍA ══════════ -->
+            <section x-show="vista === 'galeria'">
+                <!-- Formulario subir foto -->
+                <div class="card">
+                    <h3>Subir nueva foto</h3>
+                    <form @submit.prevent="subirFoto()" class="form-inline" enctype="multipart/form-data">
+                        <div class="campo">
+                            <label>Foto *</label>
+                            <div class="dropzone" @dragover.prevent @drop.prevent="dropFoto($event)" @click="$refs.fileInput.click()">
+                                <template x-if="!previewFoto">
+                                    <div class="dropzone-placeholder">
+                                        <svg viewBox="0 0 24 24" width="40"><path d="M19 7v3h-2V7h-3V5h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z" fill="currentColor"/></svg>
+                                        <p>Haz clic o arrastra una imagen aquí</p>
+                                        <span>JPG, PNG, WebP · máx. 8 MB</span>
+                                    </div>
+                                </template>
+                                <img x-show="previewFoto" :src="previewFoto" class="dropzone-preview" alt="Preview">
+                            </div>
+                            <input type="file" x-ref="fileInput" accept="image/*" @change="seleccionarFoto($event)" style="display:none">
+                        </div>
+                        <div class="form-grid">
+                            <div class="campo">
+                                <label>Título *</label>
+                                <input type="text" x-model="fotoForm.titulo" placeholder="Ej: Tarde de manualidades" required>
+                            </div>
+                            <div class="campo">
+                                <label>Categoría</label>
+                                <select x-model="fotoForm.categoria">
+                                    <option value="general">General</option>
+                                    <option value="residentes">Residentes</option>
+                                    <option value="actividades">Actividades</option>
+                                    <option value="celebraciones">Celebraciones</option>
+                                    <option value="instalaciones">Instalaciones</option>
+                                </select>
+                            </div>
+                            <div class="campo campo--ancho">
+                                <label>Descripción <span class="opcional">(opcional)</span></label>
+                                <input type="text" x-model="fotoForm.descripcion" placeholder="Descripción breve de la foto">
+                            </div>
+                        </div>
+                        <div class="form-acciones">
+                            <button type="submit" class="btn-primario" :disabled="subiendoFoto || !fotoForm.archivo">
+                                <span x-show="!subiendoFoto">Subir foto</span>
+                                <span x-show="subiendoFoto">Subiendo... <span class="spinner"></span></span>
+                            </button>
+                            <button type="button" class="btn-ghost" @click="resetFotoForm()" x-show="fotoForm.archivo">
+                                Cancelar
+                            </button>
+                        </div>
+                        <!-- Progreso -->
+                        <div class="progreso-barra" x-show="subiendoFoto">
+                            <div class="progreso-barra__inner" :style="'width:' + progresoSubida + '%'"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Grid de fotos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Fotos en galería (<span x-text="galeriaItems.length"></span>)</h3>
+                        <div class="filtros">
+                            <select x-model="filtroCategoria" @change="filtrarGaleria()">
+                                <option value="">Todas las categorías</option>
+                                <option value="residentes">Residentes</option>
+                                <option value="actividades">Actividades</option>
+                                <option value="celebraciones">Celebraciones</option>
+                                <option value="instalaciones">Instalaciones</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="galeria-admin" x-show="galeriaFiltrada.length > 0">
+                        <template x-for="foto in galeriaFiltrada" :key="foto.id">
+                            <div class="galeria-admin__item">
+                                <img :src="foto.url_thumb" :alt="foto.titulo" loading="lazy">
+                                <div class="galeria-admin__info">
+                                    <strong x-text="foto.titulo"></strong>
+                                    <span x-text="foto.categoria" class="badge badge--gris"></span>
+                                </div>
+                                <button class="galeria-admin__eliminar" @click="confirmarEliminarFoto(foto)" title="Eliminar">
+                                    <svg viewBox="0 0 24 24" width="18"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="card-vacio" x-show="galeriaFiltrada.length === 0">
+                        <p>No hay fotos en esta categoría aún.</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════ ACTIVIDADES ══════════ -->
+            <section x-show="vista === 'actividades'">
+                <div class="dos-columnas">
+                    <!-- Formulario -->
+                    <div class="card">
+                        <h3 x-text="actividadEditando ? 'Editar actividad' : 'Nueva actividad'"></h3>
+                        <form @submit.prevent="guardarActividad()">
+                            <div class="campo">
+                                <label>Título *</label>
+                                <input type="text" x-model="actividadForm.titulo" placeholder="Ej: Taller de pintura" required>
+                            </div>
+                            <div class="campo">
+                                <label>Descripción *</label>
+                                <textarea x-model="actividadForm.descripcion" rows="3" placeholder="Describe la actividad..." required></textarea>
+                            </div>
+                            <div class="form-grid">
+                                <div class="campo">
+                                    <label>Categoría</label>
+                                    <select x-model="actividadForm.categoria">
+                                        <option value="Recreación">Recreación</option>
+                                        <option value="Celebración">Celebración</option>
+                                        <option value="Espiritual">Espiritual</option>
+                                        <option value="Salud">Salud</option>
+                                        <option value="Cultural">Cultural</option>
+                                    </select>
+                                </div>
+                                <div class="campo">
+                                    <label>Día</label>
+                                    <input type="number" x-model="actividadForm.dia" min="1" max="31" placeholder="15">
+                                </div>
+                                <div class="campo">
+                                    <label>Mes</label>
+                                    <select x-model="actividadForm.mes">
+                                        <option value="Ene">Enero</option><option value="Feb">Febrero</option>
+                                        <option value="Mar">Marzo</option><option value="Abr">Abril</option>
+                                        <option value="May">Mayo</option><option value="Jun">Junio</option>
+                                        <option value="Jul">Julio</option><option value="Ago">Agosto</option>
+                                        <option value="Sep">Septiembre</option><option value="Oct">Octubre</option>
+                                        <option value="Nov">Noviembre</option><option value="Dic">Diciembre</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-acciones">
+                                <button type="submit" class="btn-primario" :disabled="cargando">
+                                    <span x-text="actividadEditando ? 'Guardar cambios' : 'Agregar actividad'"></span>
+                                </button>
+                                <button type="button" class="btn-ghost" @click="cancelarEdicion()" x-show="actividadEditando">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Lista actividades -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Actividades (<span x-text="actividades.length"></span>)</h3>
+                        </div>
+                        <div class="lista-actividades">
+                            <template x-for="act in actividades" :key="act.id">
+                                <div class="actividad-item">
+                                    <div class="actividad-item__fecha">
+                                        <span x-text="act.dia"></span>
+                                        <small x-text="act.mes"></small>
+                                    </div>
+                                    <div class="actividad-item__info">
+                                        <strong x-text="act.titulo"></strong>
+                                        <p x-text="act.descripcion"></p>
+                                        <span class="badge badge--gris" x-text="act.categoria"></span>
+                                    </div>
+                                    <div class="actividad-item__acciones">
+                                        <button @click="editarActividad(act)" class="btn-icono btn-icono--azul" title="Editar">
+                                            <svg viewBox="0 0 24 24" width="16"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
+                                        </button>
+                                        <button @click="confirmarEliminarActividad(act)" class="btn-icono btn-icono--rojo" title="Eliminar">
+                                            <svg viewBox="0 0 24 24" width="16"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="card-vacio" x-show="actividades.length === 0">
+                                <p>Aún no hay actividades registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════ MENSAJES ══════════ -->
+            <section x-show="vista === 'mensajes'">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mensajes (<span x-text="mensajes.length"></span>)</h3>
+                        <span class="badge badge--rojo" x-show="stats.mensajes_nuevos > 0">
+                            <span x-text="stats.mensajes_nuevos + ' nuevos'"></span>
+                        </span>
+                    </div>
+                    <div class="mensajes-lista">
+                        <template x-for="m in mensajes" :key="m.id">
+                            <div class="mensaje-card" :class="{ 'mensaje-card--nuevo': !m.leido }">
+                                <div class="mensaje-card__header">
+                                    <div class="mensaje-card__info">
+                                        <strong x-text="m.nombre"></strong>
+                                        <a :href="'mailto:' + m.email" x-text="m.email"></a>
+                                        <span x-show="m.telefono" x-text="m.telefono" class="texto-claro"></span>
+                                    </div>
+                                    <div class="mensaje-card__meta">
+                                        <span class="badge" :class="m.leido ? 'badge--gris' : 'badge--verde'" x-text="m.leido ? 'Leído' : 'Nuevo'"></span>
+                                        <span class="texto-claro" x-text="formatFecha(m.creado_en)"></span>
+                                    </div>
+                                </div>
+                                <div class="mensaje-card__asunto">
+                                    <strong>Asunto:</strong> <span x-text="m.asunto"></span>
+                                </div>
+                                <p class="mensaje-card__texto" x-text="m.mensaje"></p>
+                                <div class="mensaje-card__acciones">
+                                    <button @click="abrirModalEmail(m)" class="btn-secundario btn-sm">
+                                        Responder por email
+                                    </button>
+                                    <button x-show="!m.leido" @click="marcarLeido(m)" class="btn-ghost btn-sm">
+                                        Marcar como leído
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="card-vacio" x-show="mensajes.length === 0">
+                            <p>No hay mensajes aún.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════ TESTIMONIOS ══════════ -->
+            <section x-show="vista === 'testimonios'">
+                <div class="dos-columnas">
+                    <!-- Formulario -->
+                    <div class="card">
+                        <h3 x-text="testimonioEditando ? 'Editar testimonio' : 'Nuevo testimonio'"></h3>
+                        <form @submit.prevent="guardarTestimonio()">
+                            <div class="campo">
+                                <label>Nombre *</label>
+                                <input type="text" x-model="testimonioForm.nombre" placeholder="Ej: María Rodríguez" required>
+                            </div>
+                            <div class="campo">
+                                <label>Relación con la fundación</label>
+                                <input type="text" x-model="testimonioForm.cargo" placeholder="Ej: Familiar de residente">
+                            </div>
+                            <div class="campo">
+                                <label>Testimonio *</label>
+                                <textarea x-model="testimonioForm.texto" rows="4"
+                                    placeholder="Escribe aquí el testimonio de esta persona..."
+                                    required maxlength="600"></textarea>
+                                <span class="opcional" x-text="(testimonioForm.texto?.length ?? 0) + '/600'"></span>
+                            </div>
+                            <div class="campo">
+                                <label>Orden <span class="opcional">(menor número = primero)</span></label>
+                                <input type="number" x-model="testimonioForm.orden" min="0" placeholder="0">
+                            </div>
+                            <div class="form-acciones">
+                                <button type="submit" class="btn-primario" :disabled="cargando">
+                                    <span x-text="testimonioEditando ? 'Guardar cambios' : 'Agregar testimonio'"></span>
+                                </button>
+                                <button type="button" class="btn-ghost" @click="cancelarEdicionTestimonio()" x-show="testimonioEditando">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Lista de testimonios -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Testimonios (<span x-text="testimonios.length"></span>)</h3>
+                        </div>
+                        <div class="lista-actividades">
+                            <template x-for="t in testimonios" :key="t.id">
+                                <div class="actividad-item">
+                                    <div class="actividad-item__fecha"
+                                         style="min-width:42px;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;background:var(--color-primario-claro,#f0e6d3);color:var(--color-primario,#8B5E3C)"
+                                         x-text="t.nombre.split(' ').filter(Boolean).map(w=>w[0].toUpperCase()).slice(0,2).join('')">
+                                    </div>
+                                    <div class="actividad-item__info" style="flex:1;min-width:0">
+                                        <strong x-text="t.nombre"></strong>
+                                        <p class="texto-claro" x-text="t.cargo"></p>
+                                        <p style="font-size:.85rem;color:#555;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical" x-text="t.texto"></p>
+                                    </div>
+                                    <div class="actividad-item__acciones">
+                                        <button @click="editarTestimonio(t)" class="btn-icono btn-icono--azul" title="Editar">
+                                            <svg viewBox="0 0 24 24" width="16"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
+                                        </button>
+                                        <button @click="confirmarEliminarTestimonio(t)" class="btn-icono btn-icono--rojo" title="Eliminar">
+                                            <svg viewBox="0 0 24 24" width="16"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="card-vacio" x-show="testimonios.length === 0">
+                                <p>Aún no hay testimonios. Agrega el primero.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════ CONFIGURACIÓN ══════════ -->
+            <section x-show="vista === 'configuracion'">
+                <div class="card">
+                    <h3>Redes Sociales y Contacto</h3>
+                    <form @submit.prevent="guardarConfig()">
+                        <div class="form-grid">
+                            <div class="campo">
+                                <label>URL Facebook</label>
+                                <div class="campo-con-icono">
+                                    <svg viewBox="0 0 24 24" width="18"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" fill="currentColor"/></svg>
+                                    <input type="url" x-model="configForm.facebook_url" placeholder="https://www.facebook.com/tuPagina">
+                                </div>
+                            </div>
+                            <div class="campo">
+                                <label>URL Instagram</label>
+                                <div class="campo-con-icono">
+                                    <svg viewBox="0 0 24 24" width="18"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+                                    <input type="url" x-model="configForm.instagram_url" placeholder="https://www.instagram.com/tuCuenta">
+                                </div>
+                            </div>
+                            <div class="campo">
+                                <label>URL TikTok</label>
+                                <div class="campo-con-icono">
+                                    <svg viewBox="0 0 24 24" width="18"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z" fill="currentColor"/></svg>
+                                    <input type="url" x-model="configForm.tiktok_url" placeholder="https://www.tiktok.com/@tuCuenta">
+                                </div>
+                            </div>
+                            <div class="campo">
+                                <label>Número WhatsApp (sin + ni espacios)</label>
+                                <div class="campo-con-icono">
+                                    <svg viewBox="0 0 24 24" width="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L.054 23.5l5.79-1.519A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" fill="currentColor"/></svg>
+                                    <input type="text" x-model="configForm.whatsapp_num" placeholder="573146403147">
+                                </div>
+                            </div>
+                            <div class="campo">
+                                <label>Token Facebook Graph API <span class="opcional">(para feed automático)</span></label>
+                                <input type="password" x-model="configForm.fb_page_token" placeholder="EAABsbCS...">
+                            </div>
+                            <div class="campo">
+                                <label>ID de Página Facebook <span class="opcional">(para feed automático)</span></label>
+                                <input type="text" x-model="configForm.fb_page_id" placeholder="123456789">
+                            </div>
+                        </div>
+                        <div class="form-acciones">
+                            <button type="submit" class="btn-primario" :disabled="cargando">
+                                <span x-show="!cargando">Guardar configuración</span>
+                                <span x-show="cargando">Guardando...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Correo electrónico -->
+                <div class="card">
+                    <h3>Correo Electrónico</h3>
+                    <p class="texto-claro" style="margin-bottom:1rem">
+                        Configura tu servidor SMTP para responder mensajes directamente desde el panel.
+                        Funciona con Gmail, Outlook o cualquier proveedor.
+                    </p>
+                    <div class="form-grid">
+                        <div class="campo">
+                            <label>Nombre del remitente</label>
+                            <input type="text" x-model="configForm.email_remitente" placeholder="Hogar La Morenita">
+                        </div>
+                        <div class="campo">
+                            <label>Correo (usuario SMTP)</label>
+                            <input type="email" x-model="configForm.email_usuario" placeholder="hogarelamorenita@gmail.com">
+                        </div>
+                        <div class="campo">
+                            <label>Servidor SMTP</label>
+                            <input type="text" x-model="configForm.email_host" placeholder="smtp.gmail.com">
+                        </div>
+                        <div class="campo">
+                            <label>Puerto</label>
+                            <input type="number" x-model="configForm.email_puerto" placeholder="587">
+                        </div>
+                        <div class="campo campo--ancho">
+                            <label>Contraseña / App Password</label>
+                            <input type="password" x-model="configForm.email_pass" placeholder="••••••••••••••••">
+                            <span class="opcional">
+                                Gmail: necesitas una <strong>App Password</strong>
+                                (Seguridad → Verificación en 2 pasos → Contraseñas de aplicaciones)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-acciones">
+                        <button type="button" class="btn-primario" :disabled="cargando" @click="guardarConfig()">
+                            <span x-show="!cargando">Guardar configuración de correo</span>
+                            <span x-show="cargando">Guardando...</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Zona peligrosa -->
+                <div class="card card--peligro">
+                    <h3>Zona de administración</h3>
+                    <p>Cambia tu contraseña de acceso al panel.</p>
+                    <form @submit.prevent="cambiarPassword()">
+                        <div class="form-grid">
+                            <div class="campo">
+                                <label>Contraseña actual</label>
+                                <input type="password" x-model="passForm.actual" required>
+                            </div>
+                            <div class="campo">
+                                <label>Nueva contraseña (mín. 8 caracteres)</label>
+                                <input type="password" x-model="passForm.nueva" minlength="8" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-peligro" :disabled="cargando">Cambiar contraseña</button>
+                    </form>
+                </div>
+            </section>
+
+        </div><!-- /admin-contenido -->
+    </main>
+</div><!-- /admin-layout -->
+
+
+<!-- Modal Email -->
+<div class="modal-overlay" x-show="emailModal.abierto" x-cloak @click.self="emailModal.abierto = false">
+    <div class="modal-caja" style="max-width:540px;width:95%">
+        <h4>Responder a <span x-text="emailModal.msg?.nombre"></span></h4>
+
+        <div class="campo" style="margin-top:1rem">
+            <label>Para</label>
+            <input type="email" :value="emailModal.msg?.email" readonly
+                   style="background:#f5f5f5;cursor:default">
+        </div>
+        <div class="campo">
+            <label>De</label>
+            <template x-if="emailModal.deEmail">
+                <input type="text" :value="emailModal.deEmail" readonly
+                       style="background:#f5f5f5;cursor:default">
+            </template>
+            <template x-if="!emailModal.deEmail">
+                <p class="texto-claro" style="color:#e67e22;font-size:.9rem">
+                    ⚠️ No hay correo configurado. Ve a <strong>Configuración → Correo Electrónico</strong> primero.
+                </p>
+            </template>
+        </div>
+        <div class="campo">
+            <label>Asunto</label>
+            <input type="text" x-model="emailModal.asunto" required>
+        </div>
+        <div class="campo">
+            <label>Mensaje</label>
+            <textarea x-model="emailModal.cuerpo" rows="7"
+                      placeholder="Escribe aquí tu respuesta..." required
+                      style="resize:vertical"></textarea>
+        </div>
+
+        <div class="modal-acciones">
+            <button class="btn-ghost" @click="emailModal.abierto = false">Cancelar</button>
+            <button class="btn-primario"
+                    @click="enviarEmail()"
+                    :disabled="emailModal.enviando || !emailModal.cuerpo.trim() || !emailModal.deEmail">
+                <span x-show="!emailModal.enviando">Enviar email</span>
+                <span x-show="emailModal.enviando">Enviando... <span class="spinner"></span></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal confirmación -->
+<div class="modal-overlay" x-show="modal.abierto" x-cloak @click.self="modal.abierto = false">
+    <div class="modal-caja">
+        <h4 x-text="modal.titulo"></h4>
+        <p x-text="modal.mensaje"></p>
+        <div class="modal-acciones">
+            <button class="btn-ghost" @click="modal.abierto = false">Cancelar</button>
+            <button class="btn-peligro" @click="modal.confirmar(); modal.abierto = false">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/admin.js"></script>
+</body>
+</html>
