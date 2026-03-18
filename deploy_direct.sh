@@ -52,8 +52,11 @@ fi
 
 cd "$APP_DIR"
 
-# ── 3. Directorios de datos ────────────────────────────────────
+# ── 3. Directorios de datos y symlinks para nginx ─────────────
 mkdir -p api/db public/uploads/gallery public/cache backups
+# Nginx sirve /uploads/ y /cache/ desde la raíz del proyecto
+[ -L "$APP_DIR/uploads" ] || ln -s "$APP_DIR/public/uploads" "$APP_DIR/uploads"
+[ -L "$APP_DIR/cache" ]   || ln -s "$APP_DIR/public/cache"   "$APP_DIR/cache"
 ok "Directorios de datos creados"
 
 # ── 4. Instalar dependencias Node ─────────────────────────────
