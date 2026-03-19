@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería — Fundación Hogar La Morenita</title>
+  <link rel="icon" type="image/jpeg" href="/logoCasaMorenita.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primario: #8B4513;
+      --fondo: #f4f0eb;
+      --header-h: 64px;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: #111;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .gal-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      background: rgba(17,17,17,.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1.5rem;
+    }
+
+    .gal-header__back {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      color: #ccc;
+      text-decoration: none;
+      font-size: .95rem;
+      transition: color .2s;
+    }
+    .gal-header__back:hover { color: #fff; }
+
+    .gal-header__titulo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .gal-header__contador {
+      font-size: .85rem;
+      color: #888;
+    }
+
+    /* ── Filtros ─────────────────────────────────────────── */
+    .gal-filtros {
+      display: flex;
+      gap: .5rem;
+      padding: 1rem 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      background: #111;
+      position: sticky;
+      top: var(--header-h);
+      z-index: 99;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .gal-filtros::-webkit-scrollbar { display: none; }
+
+    .gal-filtro {
+      flex-shrink: 0;
+      padding: .4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: transparent;
+      color: #ccc;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .gal-filtro:hover  { border-color: rgba(255,255,255,.5); color: #fff; }
+    .gal-filtro.activo { background: var(--primario); border-color: var(--primario); color: #fff; }
+
+    /* ── Grid masonry ────────────────────────────────────── */
+    .gal-grid {
+      columns: 4;
+      column-gap: 4px;
+      padding: 4px;
+    }
+
+    @media (max-width: 1200px) { .gal-grid { columns: 3; } }
+    @media (max-width: 768px)  { .gal-grid { columns: 2; } }
+    @media (max-width: 480px)  { .gal-grid { columns: 1; } }
+
+    .gal-item {
+      break-inside: avoid;
+      margin-bottom: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .gal-item img {
+      width: 100%;
+      display: block;
+      transition: transform .3s ease;
+    }
+
+    .gal-item:hover img { transform: scale(1.03); }
+
+    .gal-item__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .3s;
+      display: flex;
+      align-items: flex-end;
+      padding: .75rem;
+    }
+    .gal-item:hover .gal-item__overlay { opacity: 1; }
+
+    .gal-item__titulo {
+      font-size: .85rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .gal-item__categoria {
+      font-size: .75rem;
+      opacity: .75;
+    }
+
+    /* ── Estados vacío / carga ───────────────────────────── */
+    .gal-estado {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      gap: 1rem;
+      color: #555;
+    }
+    .gal-estado svg { opacity: .4; }
+
+    /* ── Lightbox ────────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.abierto { display: flex; }
+
+    .lightbox__img {
+      max-width: 92vw;
+      max-height: 82vh;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .lightbox__info {
+      margin-top: .75rem;
+      text-align: center;
+    }
+    .lightbox__info strong { font-size: 1rem; }
+    .lightbox__info span   { font-size: .85rem; color: #888; margin-left: .5rem; }
+
+    .lightbox__cerrar {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      opacity: .7;
+    }
+    .lightbox__cerrar:hover { opacity: 1; }
+
+    .lightbox__nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,.1);
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: .5rem .9rem;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+    .lightbox__nav:hover { background: rgba(255,255,255,.25); }
+    .lightbox__nav--prev { left: 1rem; }
+    .lightbox__nav--next { right: 1rem; }
+
+    @media (max-width: 480px) {
+      .lightbox__nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="gal-header">
+  <a href="/" class="gal-header__back">
+    <svg viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Volver al sitio
+  </a>
+  <span class="gal-header__titulo">Galería de fotos</span>
+  <span class="gal-header__contador" id="contador"></span>
+</header>
+
+<!-- Filtros -->
+<div class="gal-filtros" id="filtros">
+  <button class="gal-filtro activo" data-cat="todas">Todas</button>
+</div>
+
+<!-- Grid -->
+<div class="gal-grid" id="grid"></div>
+
+<!-- Estado vacío / cargando -->
+<div class="gal-estado" id="estado">
+  <svg viewBox="0 0 24 24" width="64" fill="#fff"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+  <p>Cargando fotos...</p>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox__cerrar" id="lb-cerrar">×</button>
+  <button class="lightbox__nav lightbox__nav--prev" id="lb-prev">‹</button>
+  <img class="lightbox__img" id="lb-img" src="" alt="">
+  <div class="lightbox__info">
+    <strong id="lb-titulo"></strong>
+    <span id="lb-cat"></span>
+  </div>
+  <button class="lightbox__nav lightbox__nav--next" id="lb-next">›</button>
+</div>
+
+<script>
+  /* ── Utilidad ── */
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  /* ── Estado ── */
+  let todasLasFotos = [];
+  let fotosVisibles = [];
+  let catActual     = 'todas';
+  let lbIndice      = 0;
+
+  /* ── Elementos ── */
+  const grid     = document.getElementById('grid');
+  const filtros  = document.getElementById('filtros');
+  const estado   = document.getElementById('estado');
+  const contador = document.getElementById('contador');
+  const lightbox = document.getElementById('lightbox');
+  const lbImg    = document.getElementById('lb-img');
+  const lbTitulo = document.getElementById('lb-titulo');
+  const lbCat    = document.getElementById('lb-cat');
+
+  /* ── Cargar fotos ── */
+  async function cargar() {
+    try {
+      const res = await fetch('/api/galeria');
+      if (!res.ok) throw new Error();
+      const { items } = await res.json();
+      todasLasFotos = items || [];
+
+      // Construir filtros de categoría únicos
+      const cats = [...new Set(todasLasFotos.map(f => f.categoria).filter(Boolean))];
+      cats.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className   = 'gal-filtro';
+        btn.dataset.cat = cat;
+        btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        filtros.appendChild(btn);
+      });
+
+      renderizar('todas');
+    } catch {
+      estado.innerHTML = '<svg viewBox="0 0 24 24" width="64" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><p>No se pudieron cargar las fotos.</p>';
+      estado.style.display = 'flex';
+    }
+  }
+
+  /* ── Renderizar grid ── */
+  function renderizar(cat) {
+    catActual     = cat;
+    fotosVisibles = cat === 'todas' ? todasLasFotos : todasLasFotos.filter(f => f.categoria === cat);
+
+    // Actualizar botones filtro
+    document.querySelectorAll('.gal-filtro').forEach(b => {
+      b.classList.toggle('activo', b.dataset.cat === cat);
+    });
+
+    // Contador
+    contador.textContent = fotosVisibles.length + ' foto' + (fotosVisibles.length !== 1 ? 's' : '');
+
+    if (!fotosVisibles.length) {
+      grid.innerHTML = '';
+      estado.innerHTML = '<svg viewBox="0 0 24 24" width="64" fill="#fff"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><p>No hay fotos en esta categoría.</p>';
+      estado.style.display = 'flex';
+      return;
+    }
+
+    estado.style.display = 'none';
+    grid.innerHTML = fotosVisibles.map((foto, i) => `
+      <div class="gal-item" data-idx="${i}">
+        <img src="${escHtml(foto.url_medium)}" alt="${escHtml(foto.titulo)}" loading="lazy">
+        <div class="gal-item__overlay">
+          <div>
+            <div class="gal-item__titulo">${escHtml(foto.titulo)}</div>
+            <div class="gal-item__categoria">${escHtml(foto.categoria || '')}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /* ── Lightbox ── */
+  function abrirLightbox(idx) {
+    lbIndice = idx;
+    const foto = fotosVisibles[idx];
+    lbImg.src        = foto.url_medium;
+    lbImg.alt        = foto.titulo;
+    lbTitulo.textContent = foto.titulo;
+    lbCat.textContent    = foto.categoria || '';
+    lightbox.classList.add('abierto');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarLightbox() {
+    lightbox.classList.remove('abierto');
+    document.body.style.overflow = '';
+  }
+
+  function navLightbox(dir) {
+    lbIndice = (lbIndice + dir + fotosVisibles.length) % fotosVisibles.length;
+    abrirLightbox(lbIndice);
+  }
+
+  /* ── Eventos ── */
+  filtros.addEventListener('click', e => {
+    const btn = e.target.closest('.gal-filtro');
+    if (btn) renderizar(btn.dataset.cat);
+  });
+
+  grid.addEventListener('click', e => {
+    const item = e.target.closest('.gal-item');
+    if (item) abrirLightbox(Number(item.dataset.idx));
+  });
+
+  document.getElementById('lb-cerrar').addEventListener('click', cerrarLightbox);
+  document.getElementById('lb-prev').addEventListener('click', () => navLightbox(-1));
+  document.getElementById('lb-next').addEventListener('click', () => navLightbox(1));
+
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) cerrarLightbox();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('abierto')) return;
+    if (e.key === 'Escape')     cerrarLightbox();
+    if (e.key === 'ArrowLeft')  navLightbox(-1);
+    if (e.key === 'ArrowRight') navLightbox(1);
+  });
+
+  /* ── Inicio ── */
+  cargar();
+</script>
+</body>
+</html>

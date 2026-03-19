@@ -100,6 +100,10 @@
                 Testimonios
                 <span class="badge badge--gris" x-show="stats.testimonios_total" x-text="stats.testimonios_total"></span>
             </button>
+            <button @click="cambiarVista('modulos')" :class="{ activo: vista === 'modulos' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="currentColor"/></svg>
+                Módulos
+            </button>
             <button @click="cambiarVista('configuracion')" :class="{ activo: vista === 'configuracion' }">
                 <svg viewBox="0 0 24 24" width="20"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/></svg>
                 Configuración
@@ -616,19 +620,33 @@
                     </form>
                 </div>
 
-                <!-- Plan de almacenamiento -->
+                <!-- Plan de almacenamiento (solo informativo) -->
                 <div class="card">
-                    <h3>Plan de Almacenamiento</h3>
-                    <p class="texto-claro" style="margin-bottom:1rem">
-                        Define cuántos GB incluye el plan contratado. Se mostrará en la barra del dashboard.
+                    <h3>Plan Contratado</h3>
+                    <p class="texto-claro" style="margin-bottom:1.2rem">
+                        Información de tu plan actual. Para cambiar o ampliar el almacenamiento contacta a soporte.
                     </p>
-                    <div class="form-grid">
-                        <div class="campo">
-                            <label>Almacenamiento del plan (GB)</label>
-                            <input type="number" min="1" max="10000" step="1"
-                                   x-model="configForm.plan_storage_gb"
-                                   placeholder="10">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem">
+                        <div style="background:#f8f9fa;border-radius:8px;padding:1rem;text-align:center">
+                            <div style="font-size:2rem;font-weight:700;color:var(--primario)" x-text="stats.disco?.plan_gb ?? '–'"></div>
+                            <div class="texto-claro" style="font-size:.85rem">GB almacenamiento</div>
                         </div>
+                        <div style="background:#f8f9fa;border-radius:8px;padding:1rem;text-align:center">
+                            <div style="font-size:2rem;font-weight:700;color:var(--primario)" x-text="stats.disco?.usado_gb ?? '–'"></div>
+                            <div class="texto-claro" style="font-size:.85rem">GB usados</div>
+                        </div>
+                        <div style="background:#f8f9fa;border-radius:8px;padding:1rem;text-align:center">
+                            <div style="font-size:2rem;font-weight:700"
+                                 :style="{ color: (stats.disco?.porcentaje ?? 0) > 90 ? '#e74c3c' : (stats.disco?.porcentaje ?? 0) > 70 ? '#e67e22' : '#27ae60' }"
+                                 x-text="(stats.disco?.porcentaje ?? '–') + '%'"></div>
+                            <div class="texto-claro" style="font-size:.85rem">capacidad usada</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:1.2rem;text-align:center">
+                        <a href="mailto:soporte@casalamorenita.com"
+                           style="font-size:.9rem;color:var(--primario);text-decoration:none">
+                            ¿Necesitas más espacio? Contacta a soporte →
+                        </a>
                     </div>
                 </div>
 
@@ -690,6 +708,125 @@
                         </div>
                         <button type="submit" class="btn-peligro" :disabled="cargando">Cambiar contraseña</button>
                     </form>
+                </div>
+            </section>
+
+            <!-- ══════════ MÓDULOS ══════════ -->
+            <section x-show="vista === 'modulos'">
+                <div class="card" style="margin-bottom:1.5rem">
+                    <h2 style="margin:0 0 .4rem">Módulos Adicionales</h2>
+                    <p class="texto-claro">
+                        Amplía tu plataforma con funcionalidades específicas para tu negocio.
+                        Cada módulo se activa de forma independiente sobre tu sitio actual.
+                    </p>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem">
+
+                    <!-- Módulo: E-commerce -->
+                    <div class="card" style="position:relative;border-top:4px solid #3498db">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#e8f4fd;color:#2980b9;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">🛒</div>
+                        <h3 style="margin:0 0 .5rem">E-commerce</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Tienda en línea con catálogo de productos, carrito de compras, gestión de pedidos e inventario en tiempo real.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Catálogo ilimitado &nbsp;·&nbsp; ✓ Inventario &nbsp;·&nbsp; ✓ Pedidos
+                        </div>
+                    </div>
+
+                    <!-- Módulo: Pasarelas de pago -->
+                    <div class="card" style="position:relative;border-top:4px solid #2ecc71">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#eafaf1;color:#27ae60;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">💳</div>
+                        <h3 style="margin:0 0 .5rem">Pasarelas de Pago</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Integración con Wompi, PayU, Stripe y PSE. Recibe pagos en línea directamente en tu cuenta bancaria.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Wompi &nbsp;·&nbsp; ✓ PayU &nbsp;·&nbsp; ✓ Stripe &nbsp;·&nbsp; ✓ PSE
+                        </div>
+                    </div>
+
+                    <!-- Módulo: Marketing Digital -->
+                    <div class="card" style="position:relative;border-top:4px solid #e74c3c">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#fdedec;color:#c0392b;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">📢</div>
+                        <h3 style="margin:0 0 .5rem">Marketing Digital</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Gestión de campañas publicitarias en Meta, Google Ads y TikTok directamente desde tu panel de administración.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Meta Ads &nbsp;·&nbsp; ✓ Google Ads &nbsp;·&nbsp; ✓ TikTok Ads
+                        </div>
+                    </div>
+
+                    <!-- Módulo: Email Marketing -->
+                    <div class="card" style="position:relative;border-top:4px solid #9b59b6">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#f5eef8;color:#8e44ad;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">📧</div>
+                        <h3 style="margin:0 0 .5rem">Campañas por Correo</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Crea y envía newsletters, campañas segmentadas y flujos de automatización a tu lista de contactos.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Templates &nbsp;·&nbsp; ✓ Segmentación &nbsp;·&nbsp; ✓ Automatización
+                        </div>
+                    </div>
+
+                    <!-- Módulo: Gestión de Eventos -->
+                    <div class="card" style="position:relative;border-top:4px solid #f39c12">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#fef9e7;color:#d68910;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">🎟️</div>
+                        <h3 style="margin:0 0 .5rem">Gestión de Eventos</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Crea eventos con registro de asistentes, venta de entradas, recordatorios automáticos y check-in digital.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Registro &nbsp;·&nbsp; ✓ Tickets &nbsp;·&nbsp; ✓ Check-in QR
+                        </div>
+                    </div>
+
+                    <!-- Módulo: CRM -->
+                    <div class="card" style="position:relative;border-top:4px solid #1abc9c">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#e8f8f5;color:#17a589;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">👥</div>
+                        <h3 style="margin:0 0 .5rem">CRM de Clientes</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Gestiona tus contactos, historial de interacciones, seguimiento de oportunidades y pipeline de ventas.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Contactos &nbsp;·&nbsp; ✓ Pipeline &nbsp;·&nbsp; ✓ Historial
+                        </div>
+                    </div>
+
+                    <!-- Módulo: IA -->
+                    <div class="card" style="position:relative;border-top:4px solid #2c3e50">
+                        <span style="position:absolute;top:1rem;right:1rem;background:#eaecee;color:#2c3e50;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
+                        <div style="font-size:2rem;margin-bottom:.75rem">🤖</div>
+                        <h3 style="margin:0 0 .5rem">Asistente con IA</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Chatbot inteligente en tu sitio web, respuestas automáticas a consultas frecuentes y análisis de sentimiento de mensajes.
+                        </p>
+                        <div style="font-size:.85rem;color:#7f8c8d">
+                            ✓ Chatbot &nbsp;·&nbsp; ✓ Auto-respuestas &nbsp;·&nbsp; ✓ Análisis
+                        </div>
+                    </div>
+
+                    <!-- CTA contacto -->
+                    <div class="card" style="border:2px dashed #bdc3c7;background:#fafafa;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:200px">
+                        <div style="font-size:2rem;margin-bottom:.75rem">💬</div>
+                        <h3 style="margin:0 0 .5rem">¿Necesitas algo específico?</h3>
+                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
+                            Desarrollamos módulos a medida según las necesidades de tu negocio.
+                        </p>
+                        <a href="mailto:soporte@casalamorenita.com"
+                           style="background:var(--primario);color:#fff;padding:.6rem 1.2rem;border-radius:6px;text-decoration:none;font-size:.9rem">
+                            Solicitar módulo →
+                        </a>
+                    </div>
+
                 </div>
             </section>
 

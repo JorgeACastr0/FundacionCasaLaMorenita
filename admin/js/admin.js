@@ -168,6 +168,7 @@ function adminApp() {
         case 'mensajes':     await this.cargarMensajes();     break;
         case 'configuracion': await this.cargarConfig();      break;
         case 'testimonios':  await this.cargarTestimonios();  break;
+        case 'modulos':      break;
       }
     },
 
