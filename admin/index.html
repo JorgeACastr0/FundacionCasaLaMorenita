@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin — Hogar La Morenita</title>
+    <link rel="icon" type="image/jpeg" href="/logoCasaMorenita.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
@@ -663,9 +664,15 @@
                        style="background:#f5f5f5;cursor:default">
             </template>
             <template x-if="!emailModal.deEmail">
-                <p class="texto-claro" style="color:#e67e22;font-size:.9rem">
-                    ⚠️ No hay correo configurado. Ve a <strong>Configuración → Correo Electrónico</strong> primero.
-                </p>
+                <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+                    <p class="texto-claro" style="color:#e67e22;font-size:.9rem;margin:0">
+                        ⚠️ No hay correo configurado.
+                    </p>
+                    <button class="btn-ghost" style="font-size:.85rem;padding:.3rem .8rem"
+                            @click="emailModal.abierto = false; cambiarVista('configuracion')">
+                        Ir a Configuración →
+                    </button>
+                </div>
             </template>
         </div>
         <div class="campo">
