@@ -195,6 +195,41 @@
                     </div>
                 </div>
 
+                <!-- Barra de almacenamiento -->
+                <div class="card" x-show="stats.disco" style="margin-top:1.5rem">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.6rem">
+                        <h3 style="margin:0">Almacenamiento</h3>
+                        <span class="texto-claro" style="font-size:.85rem">
+                            Plan: <strong x-text="stats.disco?.plan_gb + ' GB'"></strong>
+                        </span>
+                    </div>
+                    <div style="background:#f0f0f0;border-radius:999px;height:14px;overflow:hidden">
+                        <div :style="{
+                                width: Math.min(stats.disco?.porcentaje ?? 0, 100) + '%',
+                                background: (stats.disco?.porcentaje ?? 0) > 90 ? '#e74c3c'
+                                          : (stats.disco?.porcentaje ?? 0) > 70 ? '#e67e22'
+                                          : '#2ecc71',
+                                height: '100%',
+                                borderRadius: '999px',
+                                transition: 'width .5s ease'
+                             }">
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.85rem" class="texto-claro">
+                        <span>
+                            <strong x-text="stats.disco?.usado_gb + ' GB'"></strong> usados de
+                            <span x-text="stats.disco?.total_gb + ' GB'"></span> totales en disco
+                        </span>
+                        <span :style="{ color: (stats.disco?.porcentaje ?? 0) > 90 ? '#e74c3c' : (stats.disco?.porcentaje ?? 0) > 70 ? '#e67e22' : '#27ae60' }">
+                            <strong x-text="stats.disco?.porcentaje + '%'"></strong>
+                        </span>
+                    </div>
+                    <p x-show="(stats.disco?.porcentaje ?? 0) > 90"
+                       style="margin-top:.6rem;font-size:.85rem;color:#e74c3c">
+                        ⚠️ Espacio casi lleno. Elimina fotos antiguas o contacta soporte para ampliar tu plan.
+                    </p>
+                </div>
+
                 <!-- Últimos mensajes en dashboard -->
                 <div class="card" x-show="ultimosMensajes.length > 0">
                     <div class="card-header">
@@ -579,6 +614,22 @@
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <!-- Plan de almacenamiento -->
+                <div class="card">
+                    <h3>Plan de Almacenamiento</h3>
+                    <p class="texto-claro" style="margin-bottom:1rem">
+                        Define cuántos GB incluye el plan contratado. Se mostrará en la barra del dashboard.
+                    </p>
+                    <div class="form-grid">
+                        <div class="campo">
+                            <label>Almacenamiento del plan (GB)</label>
+                            <input type="number" min="1" max="10000" step="1"
+                                   x-model="configForm.plan_storage_gb"
+                                   placeholder="10">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Correo electrónico -->

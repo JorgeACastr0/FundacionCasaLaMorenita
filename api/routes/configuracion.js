@@ -8,6 +8,7 @@ const CLAVES_PERMITIDAS = new Set([
   'facebook_url', 'instagram_url', 'tiktok_url',
   'whatsapp_num', 'fb_page_token', 'fb_page_id',
   'email_host', 'email_puerto', 'email_usuario', 'email_pass', 'email_remitente',
+  'plan_storage_gb',
 ]);
 
 async function configuracionRoutes(fastify) {

@@ -2,6 +2,7 @@
 
 const bcrypt       = require('bcryptjs');
 const nodemailer   = require('nodemailer');
+const fs           = require('fs');
 const { getDb }    = require('../db/database');
 
 async function adminRoutes(fastify) {
@@ -59,6 +60,8 @@ async function adminRoutes(fastify) {
     onRequest: [fastify.autenticar],
   }, async (_req, reply) => {
     const db = getDb();
+
+    // Estadísticas de contenido
     const stats = {
       mensajes_total:    db.prepare(`SELECT COUNT(*) as n FROM mensajes`).get().n,
       mensajes_nuevos:   db.prepare(`SELECT COUNT(*) as n FROM mensajes WHERE leido = 0`).get().n,
@@ -66,6 +69,30 @@ async function adminRoutes(fastify) {
       actividades_total: db.prepare(`SELECT COUNT(*) as n FROM actividades WHERE activo = 1`).get().n,
       testimonios_total: db.prepare(`SELECT COUNT(*) as n FROM testimonios WHERE activo = 1`).get().n,
     };
+
+    // Uso de disco del filesystem donde vive el proyecto
+    try {
+      const disco = fs.statfsSync(process.env.APP_DIR || '/var/www/casalamorenita');
+      const totalBytes = disco.blocks  * disco.bsize;
+      const libreBytes = disco.bfree   * disco.bsize;
+      const usadoBytes = totalBytes - libreBytes;
+      const config     = Object.fromEntries(
+        db.prepare(`SELECT clave, valor FROM configuracion`).all().map(r => [r.clave, r.valor])
+      );
+      const planGB = parseFloat(config.plan_storage_gb) || 10;
+
+      stats.disco = {
+        usado_bytes:  usadoBytes,
+        total_bytes:  totalBytes,
+        usado_gb:     +(usadoBytes / 1e9).toFixed(2),
+        total_gb:     +(totalBytes / 1e9).toFixed(2),
+        plan_gb:      planGB,
+        porcentaje:   +((usadoBytes / (planGB * 1e9)) * 100).toFixed(1),
+      };
+    } catch {
+      stats.disco = null;
+    }
+
     return reply.send({ ok: true, stats });
   });
 
