@@ -690,57 +690,114 @@
     <!-- Bento galería rotativa -->
     <script>
     (function () {
-      const INTERVAL = 10000;
-      const FADE_MS  = 700;
-      const SLOTS    = 5;
+      var INTERVAL = 10000;
+      var FADE_MS  = 700;
+      var SLOTS    = 5;
 
-      const grid  = document.getElementById('bento-galeria');
+      var grid  = document.getElementById('bento-galeria');
       if (!grid) return;
-      const slots = Array.from(grid.querySelectorAll('.bento-slot'));
+      var slots = Array.from(grid.querySelectorAll('.bento-slot'));
 
-      const fallbacks = [
+      var fallbacks = [
         { url_medium: 'Domingoderamos.jpeg',       titulo: 'Domingo de Ramos' },
         { url_medium: 'alfonsoEsposaDiaMuejr.jpg', titulo: 'Día de la Mujer' },
         { url_medium: 'AlmuerzoDiadelaMujer.jpeg', titulo: 'Almuerzo Día de la Mujer' },
         { url_medium: 'lilianaJhonDiaMujer.jpg',   titulo: 'Celebración' },
       ];
 
-      let fotos  = [];
-      let offset = 0;
+      var fotos  = [];
+      var offset = 0;
+
+      function mostrarImagen(img, tit, foto) {
+        if (!foto) return;
+        function fadeIn() { img.style.opacity = '1'; if (tit) tit.textContent = foto.titulo || ''; }
+        img.src = foto.url_medium;
+        img.alt = foto.titulo || '';
+        if (img.complete && img.naturalWidth > 0) { fadeIn(); }
+        else { img.onload = fadeIn; img.onerror = fadeIn; }
+      }
 
       function poblar() {
         slots.forEach(function (slot, i) {
           var foto = fotos[(offset + i) % fotos.length];
           var img  = slot.querySelector('img');
           var tit  = slot.querySelector('.bento-titulo');
-          if (!foto) return;
-          img.src = foto.url_medium;
-          img.alt = foto.titulo || '';
-          if (tit) tit.textContent = foto.titulo || '';
+          mostrarImagen(img, tit, foto);
         });
       }
 
       function ciclar() {
-        grid.classList.add('bento-fadeout');
+        var nextOffset = (offset + SLOTS) % fotos.length;
+        /* 1 — desvanecer cada imagen */
+        slots.forEach(function (slot) {
+          slot.querySelector('img').style.opacity = '0';
+        });
+        /* 2 — tras el desvanecido, cambiar src y volver a mostrar */
         setTimeout(function () {
-          offset = (offset + SLOTS) % fotos.length;
-          poblar();
-          grid.classList.remove('bento-fadeout');
+          offset = nextOffset;
+          slots.forEach(function (slot, i) {
+            var foto = fotos[(offset + i) % fotos.length];
+            var img  = slot.querySelector('img');
+            var tit  = slot.querySelector('.bento-titulo');
+            mostrarImagen(img, tit, foto);
+          });
         }, FADE_MS);
       }
 
       function arrancar(lista) {
         fotos = lista.length ? lista : fallbacks;
         poblar();
-        if (fotos.length > SLOTS) {
-          setInterval(ciclar, INTERVAL);
-        }
+        if (fotos.length > SLOTS) { setInterval(ciclar, INTERVAL); }
       }
 
       fetch('/api/galeria')
         .then(function (r) { return r.json(); })
-        .then(function (data) { arrancar(data.items || []); })
-        .catch(function () { arrancar(fallbacks); });
+        .then(function (d) { arrancar(d.items || []); })
+        .catch(function ()  { arrancar(fallbacks); });
+    })();
+    </script>
+
+    <!-- Navbar adaptativo por sección -->
+    <script>
+    (function () {
+      var navbar   = document.querySelector('.navbar');
+      if (!navbar) return;
+
+      /* Secciones con fondo claro (el navbar necesita texto oscuro) */
+      var claras = ['nosotros', 'galeria', 'actividades', 'testimonios', 'ayudar', 'contacto'];
+      var navH   = 64;
+
+      function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
+
+      function actualizar() {
+        var t = 0; /* 0 = oscuro (texto blanco)  |  1 = claro (texto oscuro) */
+
+        claras.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < navH && r.bottom > 0) {
+            var cobertura = (Math.min(navH, r.bottom) - Math.max(0, r.top)) / navH;
+            if (cobertura > t) t = cobertura;
+          }
+        });
+
+        /* Interpolar: blanco (255) → gris oscuro (44) */
+        var c = lerp(255, 44, t);
+        navbar.style.setProperty('--nav-rgb', c + ', ' + c + ', ' + c);
+        navbar.style.setProperty('--nav-bg-a', (t * 0.97).toFixed(3));
+
+        /* Sombra */
+        navbar.style.boxShadow = t > 0.1
+          ? '0 1px 14px rgba(0,0,0,' + (t * 0.09).toFixed(3) + ')'
+          : '';
+
+        /* Clase helper para CTA */
+        navbar.classList.toggle('navbar--en-clara', t > 0.55);
+      }
+
+      window.addEventListener('scroll', actualizar, { passive: true });
+      actualizar();
     })();
     </script>
 </body>
