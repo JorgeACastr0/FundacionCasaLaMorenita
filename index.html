@@ -262,41 +262,28 @@
                     <p class="seccion__subtitulo">Cada foto cuenta la historia de un hogar lleno de amor.</p>
                 </div>
 
-                <!-- Grid galería dinámica -->
-                <div class="galeria__grid" id="galeria-grid">
-                    <!-- Se carga desde la API o usa las fotos estáticas -->
-                    <div class="galeria__item" data-aos="fade-up" data-aos-delay="0"
-                         @click="abrirLightbox('Domingoderamos.jpeg', 'Domingo de Ramos')">
+                <!-- Bento grid galería rotativo -->
+                <div class="bento-galeria" id="bento-galeria" data-aos="fade-up">
+                    <a href="/galeria.html" class="bento-slot bento-slot--lg">
                         <img src="Domingoderamos.jpeg" alt="Domingo de Ramos" loading="lazy">
-                        <div class="galeria__overlay">
-                            <span class="galeria__overlay-icono">🔍</span>
-                            <span class="galeria__overlay-titulo">Domingo de Ramos</span>
-                        </div>
-                    </div>
-                    <div class="galeria__item" data-aos="fade-up" data-aos-delay="100"
-                         @click="abrirLightbox('alfonsoEsposaDiaMuejr.jpg', 'Día de la Mujer')">
+                        <div class="bento-overlay"><span class="bento-titulo">Domingo de Ramos</span></div>
+                    </a>
+                    <a href="/galeria.html" class="bento-slot">
                         <img src="alfonsoEsposaDiaMuejr.jpg" alt="Día de la Mujer" loading="lazy">
-                        <div class="galeria__overlay">
-                            <span class="galeria__overlay-icono">🔍</span>
-                            <span class="galeria__overlay-titulo">Día de la Mujer</span>
-                        </div>
-                    </div>
-                    <div class="galeria__item galeria__item--grande" data-aos="fade-up" data-aos-delay="200"
-                         @click="abrirLightbox('AlmuerzoDiadelaMujer.jpeg', 'Almuerzo Día de la Mujer')">
+                        <div class="bento-overlay"><span class="bento-titulo">Día de la Mujer</span></div>
+                    </a>
+                    <a href="/galeria.html" class="bento-slot">
                         <img src="AlmuerzoDiadelaMujer.jpeg" alt="Almuerzo Día de la Mujer" loading="lazy">
-                        <div class="galeria__overlay">
-                            <span class="galeria__overlay-icono">🔍</span>
-                            <span class="galeria__overlay-titulo">Almuerzo Día de la Mujer</span>
-                        </div>
-                    </div>
-                    <div class="galeria__item" data-aos="fade-up" data-aos-delay="300"
-                         @click="abrirLightbox('lilianaJhonDiaMujer.jpg', 'Celebración Día de la Mujer')">
+                        <div class="bento-overlay"><span class="bento-titulo">Almuerzo</span></div>
+                    </a>
+                    <a href="/galeria.html" class="bento-slot">
                         <img src="lilianaJhonDiaMujer.jpg" alt="Celebración Día de la Mujer" loading="lazy">
-                        <div class="galeria__overlay">
-                            <span class="galeria__overlay-icono">🔍</span>
-                            <span class="galeria__overlay-titulo">Celebración</span>
-                        </div>
-                    </div>
+                        <div class="bento-overlay"><span class="bento-titulo">Celebración</span></div>
+                    </a>
+                    <a href="/galeria.html" class="bento-slot">
+                        <img src="Domingoderamos.jpeg" alt="" loading="lazy">
+                        <div class="bento-overlay"><span class="bento-titulo"></span></div>
+                    </a>
                 </div>
 
                 <div class="galeria__ver-mas" data-aos="fade-up">
@@ -699,5 +686,62 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- Bento galería rotativa -->
+    <script>
+    (function () {
+      const INTERVAL = 15000;
+      const FADE_MS  = 700;
+      const SLOTS    = 5;
+
+      const grid  = document.getElementById('bento-galeria');
+      if (!grid) return;
+      const slots = Array.from(grid.querySelectorAll('.bento-slot'));
+
+      const fallbacks = [
+        { url_medium: 'Domingoderamos.jpeg',       titulo: 'Domingo de Ramos' },
+        { url_medium: 'alfonsoEsposaDiaMuejr.jpg', titulo: 'Día de la Mujer' },
+        { url_medium: 'AlmuerzoDiadelaMujer.jpeg', titulo: 'Almuerzo Día de la Mujer' },
+        { url_medium: 'lilianaJhonDiaMujer.jpg',   titulo: 'Celebración' },
+      ];
+
+      let fotos  = [];
+      let offset = 0;
+
+      function poblar() {
+        slots.forEach(function (slot, i) {
+          var foto = fotos[(offset + i) % fotos.length];
+          var img  = slot.querySelector('img');
+          var tit  = slot.querySelector('.bento-titulo');
+          if (!foto) return;
+          img.src = foto.url_medium;
+          img.alt = foto.titulo || '';
+          if (tit) tit.textContent = foto.titulo || '';
+        });
+      }
+
+      function ciclar() {
+        grid.classList.add('bento-fadeout');
+        setTimeout(function () {
+          offset = (offset + SLOTS) % fotos.length;
+          poblar();
+          grid.classList.remove('bento-fadeout');
+        }, FADE_MS);
+      }
+
+      function arrancar(lista) {
+        fotos = lista.length ? lista : fallbacks;
+        poblar();
+        if (fotos.length > SLOTS) {
+          setInterval(ciclar, INTERVAL);
+        }
+      }
+
+      fetch('/api/galeria')
+        .then(function (r) { return r.json(); })
+        .then(function (data) { arrancar(data.items || []); })
+        .catch(function () { arrancar(fallbacks); });
+    })();
+    </script>
 </body>
 </html>
