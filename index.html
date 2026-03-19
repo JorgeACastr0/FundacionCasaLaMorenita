@@ -563,15 +563,25 @@
                         <form id="form-contacto" @submit.prevent="enviarFormulario($event)">
                             <div class="form__grupo">
                                 <label for="nombre">Nombre completo *</label>
-                                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+                                <input type="text" id="nombre" name="nombre" required
+                                       minlength="2" maxlength="120"
+                                       pattern="[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s\-'.]+"
+                                       title="Solo letras, espacios y guiones"
+                                       placeholder="Tu nombre">
                             </div>
                             <div class="form__grupo">
                                 <label for="email">Correo electrónico *</label>
-                                <input type="email" id="email" name="email" required placeholder="tucorreo@ejemplo.com">
+                                <input type="email" id="email" name="email" required
+                                       maxlength="150"
+                                       placeholder="tucorreo@ejemplo.com">
                             </div>
                             <div class="form__grupo">
                                 <label for="telefono">Teléfono <span class="form__opcional">(opcional)</span></label>
-                                <input type="tel" id="telefono" name="telefono" placeholder="+57 300 000 0000">
+                                <input type="tel" id="telefono" name="telefono"
+                                       pattern="[0-9+\-\s()]+"
+                                       maxlength="30"
+                                       title="Solo números, espacios y símbolos +, -, ()"
+                                       placeholder="+57 300 000 0000">
                             </div>
                             <div class="form__grupo">
                                 <label for="asunto">Asunto *</label>
@@ -586,7 +596,9 @@
                             </div>
                             <div class="form__grupo">
                                 <label for="mensaje">Mensaje *</label>
-                                <textarea id="mensaje" name="mensaje" rows="5" required placeholder="Cuéntanos cómo podemos ayudarte..."></textarea>
+                                <textarea id="mensaje" name="mensaje" rows="5" required
+                                          minlength="10" maxlength="2000"
+                                          placeholder="Cuéntanos cómo podemos ayudarte..."></textarea>
                             </div>
                             <button type="submit" class="btn btn--primario btn--bloque" id="btn-enviar">
                                 <span class="btn-texto">Enviar mensaje</span>

@@ -1,6 +1,7 @@
 'use strict';
 
-const { getDb } = require('../db/database');
+const { getDb }        = require('../db/database');
+const { limpiarHtml }  = require('../utils/sanitizar');
 
 async function actividadesRoutes(fastify) {
 
@@ -30,28 +31,49 @@ async function actividadesRoutes(fastify) {
       },
     },
   }, async (req, reply) => {
-    const { titulo, descripcion, categoria, dia, mes } = req.body;
+    const titulo      = limpiarHtml(req.body.titulo);
+    const descripcion = limpiarHtml(req.body.descripcion);
+    const categoria   = limpiarHtml(req.body.categoria || 'General');
+    const dia         = Number(req.body.dia) || 1;
+    const mes         = limpiarHtml(req.body.mes || 'Ene');
     const db = getDb();
     const { lastInsertRowid } = db.prepare(
       `INSERT INTO actividades (titulo, descripcion, categoria, dia, mes)
        VALUES (?, ?, ?, ?, ?)`
-    ).run(titulo.trim(), descripcion.trim(), (categoria || 'General').trim(), Number(dia) || 1, mes || 'Ene');
+    ).run(titulo, descripcion, categoria, dia, mes);
     return reply.code(201).send({ ok: true, id: lastInsertRowid });
   });
 
   /* PUT /api/admin/actividades/:id — admin */
   fastify.put('/admin/actividades/:id', {
     onRequest: [fastify.autenticar],
+    schema: {
+      body: {
+        type: 'object',
+        required: ['titulo', 'descripcion'],
+        properties: {
+          titulo:      { type: 'string', minLength: 2, maxLength: 120 },
+          descripcion: { type: 'string', minLength: 5, maxLength: 500 },
+          categoria:   { type: 'string', maxLength: 60, default: 'General' },
+          dia:         { type: 'integer', minimum: 1, maximum: 31, default: 1 },
+          mes:         { type: 'string', maxLength: 10, default: 'Ene' },
+        },
+      },
+    },
   }, async (req, reply) => {
     const { id } = req.params;
-    const { titulo, descripcion, categoria, dia, mes } = req.body || {};
+    const titulo      = limpiarHtml(req.body.titulo);
+    const descripcion = limpiarHtml(req.body.descripcion);
+    const categoria   = limpiarHtml(req.body.categoria || 'General');
+    const dia         = Number(req.body.dia) || 1;
+    const mes         = limpiarHtml(req.body.mes || 'Ene');
     const db  = getDb();
     const row = db.prepare(`SELECT id FROM actividades WHERE id = ? AND activo = 1`).get(id);
     if (!row) return reply.code(404).send({ error: 'No encontrado.' });
 
     db.prepare(
       `UPDATE actividades SET titulo=?, descripcion=?, categoria=?, dia=?, mes=? WHERE id=?`
-    ).run(titulo.trim(), descripcion.trim(), (categoria || 'General').trim(), Number(dia) || 1, mes || 'Ene', id);
+    ).run(titulo, descripcion, categoria, dia, mes, id);
 
     return reply.send({ ok: true });
   });
