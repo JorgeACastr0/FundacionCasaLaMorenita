@@ -634,7 +634,7 @@ p { color: var(--texto-medio); line-height: 1.8; }
   grid-template-rows: 220px 220px;
   gap: 0.75rem;
   margin-bottom: 2rem;
-  transition: opacity 0.7s ease;
+  transition: opacity 0.7s ease-out;
 }
 
 .bento-galeria.bento-fadeout { opacity: 0; }
