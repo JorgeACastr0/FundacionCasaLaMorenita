@@ -757,48 +757,5 @@
     })();
     </script>
 
-    <!-- Navbar adaptativo por sección -->
-    <script>
-    (function () {
-      var navbar   = document.querySelector('.navbar');
-      if (!navbar) return;
-
-      /* Secciones con fondo claro (el navbar necesita texto oscuro) */
-      var claras = ['nosotros', 'galeria', 'actividades', 'testimonios', 'ayudar', 'contacto'];
-      var navH   = 64;
-
-      function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
-
-      function actualizar() {
-        var t = 0; /* 0 = oscuro (texto blanco)  |  1 = claro (texto oscuro) */
-
-        claras.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (!el) return;
-          var r = el.getBoundingClientRect();
-          if (r.top < navH && r.bottom > 0) {
-            var cobertura = (Math.min(navH, r.bottom) - Math.max(0, r.top)) / navH;
-            if (cobertura > t) t = cobertura;
-          }
-        });
-
-        /* Interpolar: blanco (255) → gris oscuro (44) */
-        var c = lerp(255, 44, t);
-        navbar.style.setProperty('--nav-rgb', c + ', ' + c + ', ' + c);
-        navbar.style.setProperty('--nav-bg-a', (t * 0.97).toFixed(3));
-
-        /* Sombra */
-        navbar.style.boxShadow = t > 0.1
-          ? '0 1px 14px rgba(0,0,0,' + (t * 0.09).toFixed(3) + ')'
-          : '';
-
-        /* Clase helper para CTA */
-        navbar.classList.toggle('navbar--en-clara', t > 0.55);
-      }
-
-      window.addEventListener('scroll', actualizar, { passive: true });
-      actualizar();
-    })();
-    </script>
 </body>
 </html>
