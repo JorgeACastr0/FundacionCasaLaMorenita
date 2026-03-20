@@ -136,9 +136,9 @@ p { color: var(--texto-medio); line-height: 1.8; }
   z-index: 1000;
   padding: 1.2rem 0;
   /* CSS vars actualizadas por JS en cada scroll */
-  --nav-rgb: 255, 255, 255;
-  --nav-bg-a: 0;
-  background: rgba(var(--nav-rgb), var(--nav-bg-a));
+  --nav-rgb: 255, 255, 255;   /* color texto: blanco → oscuro */
+  --nav-bg-a: 0;              /* opacidad fondo: 0 → 0.97    */
+  background: rgba(255, 255, 255, var(--nav-bg-a));
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
