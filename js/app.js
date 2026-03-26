@@ -18,28 +18,6 @@ function sitio() {
     _galeriaItems: [],
 
     init() {
-      this._indexarGaleria();
-
-      // Event delegation para items dinámicos de galería (sin Alpine @click)
-      const grid = document.getElementById('galeria-grid');
-      grid?.addEventListener('click', (e) => {
-        const item = e.target.closest('[data-lightbox-src]');
-        if (!item) return;
-        const allItems = grid.querySelectorAll('[data-lightbox-src]');
-        const idx = Array.from(allItems).indexOf(item);
-        this._galeriaItems = Array.from(allItems).map(el => ({
-          src: el.dataset.lightboxSrc,
-          alt: el.dataset.lightboxAlt || '',
-        }));
-        this.lightbox = {
-          abierto: true,
-          src:     item.dataset.lightboxSrc,
-          alt:     item.dataset.lightboxAlt || '',
-          indice:  idx >= 0 ? idx : 0,
-        };
-        document.body.style.overflow = 'hidden';
-      });
-
       // Cargar contenido dinámico (sin bloquear el render)
       this._cargarGaleria();
       this._cargarActividades();
@@ -51,44 +29,15 @@ function sitio() {
       this.scrolled = window.scrollY > 60;
     },
 
-    /* Indexa todos los items del grid para el lightbox (items estáticos) */
-    _indexarGaleria() {
-      const items = document.querySelectorAll('.galeria__item:not([data-lightbox-src])');
-      this._galeriaItems = Array.from(items).map(el => ({
-        src: el.querySelector('img')?.src || '',
-        alt: el.querySelector('.galeria__overlay-titulo')?.textContent || '',
-      }));
-    },
+    _indexarGaleria() {},
 
 
     /* ══════════════════════════════════════
        CARGA DINÁMICA DESDE API
     ══════════════════════════════════════ */
 
-    /* Galería — reemplaza los items hardcoded si la API tiene fotos */
-    async _cargarGaleria() {
-      try {
-        const res = await fetch('/api/galeria');
-        if (!res.ok) return;
-        const { items } = await res.json();
-        if (!items?.length) return;
-
-        const grid = document.getElementById('galeria-grid');
-        if (!grid) return;
-
-        grid.innerHTML = items.map(foto => `
-          <div class="galeria__item"
-               data-lightbox-src="${foto.url_medium}"
-               data-lightbox-alt="${escHtml(foto.titulo)}">
-            <img src="${foto.url_thumb}" alt="${escHtml(foto.titulo)}" loading="lazy">
-            <div class="galeria__overlay">
-              <span class="galeria__overlay-icono">🔍</span>
-              <span class="galeria__overlay-titulo">${escHtml(foto.titulo)}</span>
-            </div>
-          </div>
-        `).join('');
-      } catch { /* red caída: mantiene fotos hardcoded */ }
-    },
+    /* Galería — manejada por el script bento en index.html */
+    async _cargarGaleria() {},
 
     /* Actividades — reemplaza las tarjetas hardcoded si la API tiene datos */
     async _cargarActividades() {
