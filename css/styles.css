@@ -40,8 +40,7 @@ body {
   color: var(--texto);
   background: var(--blanco);
   line-height: 1.7;
-  overflow-x: hidden; /* fallback */
-  overflow-x: clip;   /* no crea scroll container → no afecta position:fixed en iOS */
+  /* sin overflow en body → los position:fixed no se ven afectados en iOS Safari */
 }
 
 /* Touch: eliminar delay de 300ms en iOS y activar tap en todos los interactivos */
@@ -1235,7 +1234,7 @@ p { color: var(--texto-medio); line-height: 1.8; }
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  z-index: 900;
+  z-index: 9000;
   width: 56px;
   height: 56px;
   background: #25d366;
@@ -1246,6 +1245,10 @@ p { color: var(--texto-medio); line-height: 1.8; }
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
   transition: var(--transicion);
   animation: whatsappPulso 2.5s infinite;
+  /* capa GPU propia: no le afecta overflow de ningún padre */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .whatsapp-float:hover {
