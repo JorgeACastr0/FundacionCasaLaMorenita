@@ -33,7 +33,6 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  overflow-x: hidden; /* aquí, no en body — evita bug iOS Safari con position:fixed */
 }
 
 body {
@@ -41,6 +40,14 @@ body {
   color: var(--texto);
   background: var(--blanco);
   line-height: 1.7;
+  overflow-x: hidden; /* fallback */
+  overflow-x: clip;   /* no crea scroll container → no afecta position:fixed en iOS */
+}
+
+/* Touch: eliminar delay de 300ms en iOS y activar tap en todos los interactivos */
+a, button, [role="button"], input, select, textarea, label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body.no-scroll { overflow: hidden; }
@@ -135,7 +142,9 @@ p { color: var(--texto-medio); line-height: 1.8; }
   right: 0;
   z-index: 1000;
   padding: 1.2rem 0;
-  background: linear-gradient(135deg, var(--primario-oscuro) 0%, var(--primario) 100%);
+  background: var(--primario-oscuro);
+  -webkit-transform: translateZ(0); /* fuerza capa GPU en iOS → evita fondo transparente */
+  transform: translateZ(0);
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
 }
 
@@ -1306,7 +1315,8 @@ p { color: var(--texto-medio); line-height: 1.8; }
 
   .navbar__links a { color: var(--texto) !important; font-size: 1.05rem; width: 100%; padding: 0.75rem 1rem; }
 
-  .navbar__cta {
+  /* especificidad mayor que .navbar__links a para ganar con !important */
+  .navbar__links a.navbar__cta {
     background: var(--primario) !important;
     color: var(--blanco) !important;
     border-color: var(--primario) !important;
