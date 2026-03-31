@@ -203,6 +203,7 @@ p { color: var(--texto-medio); line-height: 1.8; }
   border-radius: var(--radio-full) !important;
   padding: 0.45rem 1.2rem !important;
   font-weight: 700 !important;
+  color: var(--blanco) !important;
 }
 .navbar__cta:hover {
   background: var(--blanco) !important;
