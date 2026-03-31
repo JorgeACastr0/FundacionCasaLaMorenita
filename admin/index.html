@@ -713,120 +713,43 @@
 
             <!-- ══════════ MÓDULOS ══════════ -->
             <section x-show="vista === 'modulos'">
-                <div class="card" style="margin-bottom:1.5rem">
-                    <h2 style="margin:0 0 .4rem">Módulos Adicionales</h2>
-                    <p class="texto-claro">
-                        Amplía tu plataforma con funcionalidades específicas para tu negocio.
-                        Cada módulo se activa de forma independiente sobre tu sitio actual.
+                <div class="card" style="max-width:640px;margin:0 auto;text-align:center;padding:3rem 2rem">
+                    <div style="width:64px;height:64px;background:var(--primario-claro);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:1.8rem">
+                        ✨
+                    </div>
+                    <h2 style="margin:0 0 .75rem">Solicita una funcionalidad</h2>
+                    <p class="texto-claro" style="margin-bottom:2rem;line-height:1.7">
+                        ¿Necesitas algo que tu plataforma aún no tiene? Cuéntanos qué funcionalidad o módulo adicional necesitas y lo evaluamos para tu negocio.
                     </p>
-                </div>
 
-                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem">
+                    <textarea
+                        id="mod-descripcion"
+                        placeholder="Describe qué necesitas. Ej: quiero poder agendar citas desde mi sitio web, o necesito una tienda para vender mis productos..."
+                        style="width:100%;min-height:130px;padding:.85rem 1rem;border:1.5px solid #e0e0e0;border-radius:8px;font-size:.95rem;font-family:inherit;resize:vertical;box-sizing:border-box;margin-bottom:1.25rem;transition:border-color .2s"
+                        onfocus="this.style.borderColor='var(--primario)'"
+                        onblur="this.style.borderColor='#e0e0e0'"
+                    ></textarea>
 
-                    <!-- Módulo: E-commerce -->
-                    <div class="card" style="position:relative;border-top:4px solid #3498db">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#e8f4fd;color:#2980b9;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">🛒</div>
-                        <h3 style="margin:0 0 .5rem">E-commerce</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Tienda en línea con catálogo de productos, carrito de compras, gestión de pedidos e inventario en tiempo real.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Catálogo ilimitado &nbsp;·&nbsp; ✓ Inventario &nbsp;·&nbsp; ✓ Pedidos
-                        </div>
-                    </div>
-
-                    <!-- Módulo: Pasarelas de pago -->
-                    <div class="card" style="position:relative;border-top:4px solid #2ecc71">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#eafaf1;color:#27ae60;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">💳</div>
-                        <h3 style="margin:0 0 .5rem">Pasarelas de Pago</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Integración con Wompi, PayU, Stripe y PSE. Recibe pagos en línea directamente en tu cuenta bancaria.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Wompi &nbsp;·&nbsp; ✓ PayU &nbsp;·&nbsp; ✓ Stripe &nbsp;·&nbsp; ✓ PSE
-                        </div>
-                    </div>
-
-                    <!-- Módulo: Marketing Digital -->
-                    <div class="card" style="position:relative;border-top:4px solid #e74c3c">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#fdedec;color:#c0392b;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">📢</div>
-                        <h3 style="margin:0 0 .5rem">Marketing Digital</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Gestión de campañas publicitarias en Meta, Google Ads y TikTok directamente desde tu panel de administración.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Meta Ads &nbsp;·&nbsp; ✓ Google Ads &nbsp;·&nbsp; ✓ TikTok Ads
-                        </div>
-                    </div>
-
-                    <!-- Módulo: Email Marketing -->
-                    <div class="card" style="position:relative;border-top:4px solid #9b59b6">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#f5eef8;color:#8e44ad;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">📧</div>
-                        <h3 style="margin:0 0 .5rem">Campañas por Correo</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Crea y envía newsletters, campañas segmentadas y flujos de automatización a tu lista de contactos.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Templates &nbsp;·&nbsp; ✓ Segmentación &nbsp;·&nbsp; ✓ Automatización
-                        </div>
-                    </div>
-
-                    <!-- Módulo: Gestión de Eventos -->
-                    <div class="card" style="position:relative;border-top:4px solid #f39c12">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#fef9e7;color:#d68910;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">🎟️</div>
-                        <h3 style="margin:0 0 .5rem">Gestión de Eventos</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Crea eventos con registro de asistentes, venta de entradas, recordatorios automáticos y check-in digital.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Registro &nbsp;·&nbsp; ✓ Tickets &nbsp;·&nbsp; ✓ Check-in QR
-                        </div>
-                    </div>
-
-                    <!-- Módulo: CRM -->
-                    <div class="card" style="position:relative;border-top:4px solid #1abc9c">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#e8f8f5;color:#17a589;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">👥</div>
-                        <h3 style="margin:0 0 .5rem">CRM de Clientes</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Gestiona tus contactos, historial de interacciones, seguimiento de oportunidades y pipeline de ventas.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Contactos &nbsp;·&nbsp; ✓ Pipeline &nbsp;·&nbsp; ✓ Historial
-                        </div>
-                    </div>
-
-                    <!-- Módulo: IA -->
-                    <div class="card" style="position:relative;border-top:4px solid #2c3e50">
-                        <span style="position:absolute;top:1rem;right:1rem;background:#eaecee;color:#2c3e50;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px">PRÓXIMAMENTE</span>
-                        <div style="font-size:2rem;margin-bottom:.75rem">🤖</div>
-                        <h3 style="margin:0 0 .5rem">Asistente con IA</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Chatbot inteligente en tu sitio web, respuestas automáticas a consultas frecuentes y análisis de sentimiento de mensajes.
-                        </p>
-                        <div style="font-size:.85rem;color:#7f8c8d">
-                            ✓ Chatbot &nbsp;·&nbsp; ✓ Auto-respuestas &nbsp;·&nbsp; ✓ Análisis
-                        </div>
-                    </div>
-
-                    <!-- CTA contacto -->
-                    <div class="card" style="border:2px dashed #bdc3c7;background:#fafafa;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:200px">
-                        <div style="font-size:2rem;margin-bottom:.75rem">💬</div>
-                        <h3 style="margin:0 0 .5rem">¿Necesitas algo específico?</h3>
-                        <p class="texto-claro" style="font-size:.9rem;margin-bottom:1rem">
-                            Desarrollamos módulos a medida según las necesidades de tu negocio.
-                        </p>
-                        <a href="mailto:soporte@casalamorenita.com"
-                           style="background:var(--primario);color:#fff;padding:.6rem 1.2rem;border-radius:6px;text-decoration:none;font-size:.9rem">
-                            Solicitar módulo →
+                    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+                        <a id="mod-whatsapp" href="#"
+                           onclick="(function(){
+                               var txt=document.getElementById('mod-descripcion').value.trim();
+                               if(!txt){alert('Describe primero qué necesitas.');return false;}
+                               window.open('https://api.whatsapp.com/send?phone=573146403147&text='+encodeURIComponent('Hola, soy cliente de la plataforma y quisiera solicitar la siguiente funcionalidad:\n\n'+txt),'_blank');
+                           })()"
+                           style="background:#25d366;color:#fff;padding:.7rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.95rem;display:inline-flex;align-items:center;gap:.4rem">
+                            Enviar por WhatsApp
+                        </a>
+                        <a id="mod-email" href="#"
+                           onclick="(function(){
+                               var txt=document.getElementById('mod-descripcion').value.trim();
+                               if(!txt){alert('Describe primero qué necesitas.');return false;}
+                               window.location.href='mailto:soporte@tudominio.com?subject=Solicitud%20de%20funcionalidad&body='+encodeURIComponent(txt);
+                           })()"
+                           style="background:#f4f4f4;color:#333;padding:.7rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.95rem">
+                            Enviar por correo
                         </a>
                     </div>
-
                 </div>
             </section>
 
