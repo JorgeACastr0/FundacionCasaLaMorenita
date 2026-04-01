@@ -142,8 +142,8 @@ p { color: var(--texto-medio); line-height: 1.8; }
   z-index: 1000;
   padding: 1.2rem 0;
   background: var(--primario-oscuro);
-  -webkit-transform: translateZ(0); /* fuerza capa GPU en iOS → evita fondo transparente */
-  transform: translateZ(0);
+  box-shadow: 0 2px 12px rgba(74, 31, 43, 0.4);
+  will-change: padding, box-shadow;
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
 }
 
@@ -262,7 +262,7 @@ p { color: var(--texto-medio); line-height: 1.8; }
    HERO
 ══════════════════════════════════════════════════════════════ */
 .hero {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, var(--primario-oscuro) 0%, var(--primario) 50%, #9b4a5e 100%);
   display: flex;
   flex-direction: column;

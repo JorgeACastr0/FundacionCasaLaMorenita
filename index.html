@@ -672,7 +672,7 @@
     </div>
 
 
-    <!-- WhatsApp flotante (temporalmente desactivado para pruebas de responsive)
+    <!-- WhatsApp flotante -->
     <a href="https://api.whatsapp.com/send?phone=573146403147&text=Hola%2C%20quisiera%20información%20sobre%20Casa%20Hogar%20La%20Morenita."
        class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp" data-social="whatsapp">
         <svg viewBox="0 0 24 24" width="30" height="30">
@@ -680,7 +680,6 @@
         </svg>
         <span class="whatsapp-float__tooltip">¡Escríbenos!</span>
     </a>
-    -->
 
 
     <!-- Scripts -->
@@ -706,8 +705,9 @@
         { url_medium: 'lilianaJhonDiaMujer.jpg',   titulo: 'Celebración' },
       ];
 
-      var fotos  = [];
-      var offset = 0;
+      var fotos         = [];
+      var offset        = 0;
+      var transitioning = false;
 
       function mostrarImagen(img, tit, foto) {
         if (!foto) return;
@@ -715,7 +715,11 @@
         img.src = foto.url_medium;
         img.alt = foto.titulo || '';
         if (img.complete && img.naturalWidth > 0) { fadeIn(); }
-        else { img.onload = fadeIn; img.onerror = fadeIn; }
+        else {
+          var timer = setTimeout(fadeIn, 3000); /* fallback si onload no dispara */
+          img.onload = function () { clearTimeout(timer); fadeIn(); };
+          img.onerror = function () { clearTimeout(timer); fadeIn(); };
+        }
       }
 
       function poblar() {
@@ -728,6 +732,8 @@
       }
 
       function ciclar() {
+        if (transitioning) return; /* evita solapamiento de ciclos */
+        transitioning = true;
         var nextOffset = (offset + SLOTS) % fotos.length;
         /* 1 — desvanecer cada imagen */
         slots.forEach(function (slot) {
@@ -742,6 +748,7 @@
             var tit  = slot.querySelector('.bento-titulo');
             mostrarImagen(img, tit, foto);
           });
+          setTimeout(function () { transitioning = false; }, FADE_MS + 200);
         }, FADE_MS);
       }
 
