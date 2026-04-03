@@ -765,5 +765,20 @@
     })();
     </script>
 
+    <!-- WhatsApp: mostrar al salir del hero -->
+    <script>
+    (function () {
+      var hero = document.getElementById('inicio');
+      var btn  = document.querySelector('.whatsapp-float');
+      if (!hero || !btn) return;
+
+      var observer = new IntersectionObserver(function (entries) {
+        btn.classList.toggle('wa-visible', !entries[0].isIntersecting);
+      }, { threshold: 0.1 });
+
+      observer.observe(hero);
+    })();
+    </script>
+
 </body>
 </html>
