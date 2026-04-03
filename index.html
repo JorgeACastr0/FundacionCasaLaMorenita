@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Fundación Hogar La Morenita - Cuidado integral y amoroso a adultos mayores en Cajicá, Cundinamarca. Atención especializada 24/7.">
     <meta property="og:title" content="Fundación Hogar La Morenita">
     <meta property="og:description" content="Cuidado con amor para adultos mayores en Cajicá, Cundinamarca.">
@@ -705,8 +705,9 @@
         { url_medium: 'lilianaJhonDiaMujer.jpg',   titulo: 'Celebración' },
       ];
 
-      var fotos  = [];
-      var offset = 0;
+      var fotos         = [];
+      var offset        = 0;
+      var transitioning = false;
 
       function mostrarImagen(img, tit, foto) {
         if (!foto) return;
@@ -714,7 +715,11 @@
         img.src = foto.url_medium;
         img.alt = foto.titulo || '';
         if (img.complete && img.naturalWidth > 0) { fadeIn(); }
-        else { img.onload = fadeIn; img.onerror = fadeIn; }
+        else {
+          var timer = setTimeout(fadeIn, 3000); /* fallback si onload no dispara */
+          img.onload = function () { clearTimeout(timer); fadeIn(); };
+          img.onerror = function () { clearTimeout(timer); fadeIn(); };
+        }
       }
 
       function poblar() {
@@ -727,6 +732,8 @@
       }
 
       function ciclar() {
+        if (transitioning) return; /* evita solapamiento de ciclos */
+        transitioning = true;
         var nextOffset = (offset + SLOTS) % fotos.length;
         /* 1 — desvanecer cada imagen */
         slots.forEach(function (slot) {
@@ -741,6 +748,7 @@
             var tit  = slot.querySelector('.bento-titulo');
             mostrarImagen(img, tit, foto);
           });
+          setTimeout(function () { transitioning = false; }, FADE_MS + 200);
         }, FADE_MS);
       }
 
