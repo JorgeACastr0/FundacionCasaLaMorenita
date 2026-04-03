@@ -344,7 +344,11 @@ async function cargarConsejos() {
     const res  = await fetch('/api/consejos');
     if (!res.ok) return;
     const { items } = await res.json();
-    if (!items?.length) return;
+    if (!items?.length) {
+      lista.innerHTML = '<p style="text-align:center;color:var(--texto-claro);padding:2rem 0">Próximamente publicaremos consejos de cuidado.</p>';
+      if (verMas) verMas.style.display = 'block';
+      return;
+    }
 
     const recientes = items.slice(0, 3);
 
@@ -362,7 +366,7 @@ async function cargarConsejos() {
       </a>
     `).join('');
 
-    if (items.length > 3 && verMas) verMas.style.display = 'block';
+    if (verMas) verMas.style.display = 'block';
   } catch { /* sin conexión: sección permanece vacía */ }
 }
 
