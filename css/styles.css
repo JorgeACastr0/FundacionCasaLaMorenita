@@ -33,6 +33,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden; /* evita scroll horizontal por AOS fade-left/right y fixed drawer */
 }
 
 body {
@@ -40,7 +41,11 @@ body {
   color: var(--texto);
   background: var(--blanco);
   line-height: 1.7;
-  /* sin overflow en body → los position:fixed no se ven afectados en iOS Safari */
+  /* overflow-x: hidden NO se aplica en body para no romper position:fixed en iOS Safari */
+}
+
+main {
+  overflow-x: hidden; /* contiene overflow de animaciones AOS fade-left/right */
 }
 
 /* Touch: eliminar delay de 300ms en iOS y activar tap en todos los interactivos */

@@ -239,6 +239,7 @@ function initAOS() {
     once:     true,
     offset:   80,
     easing:   'ease-out-cubic',
+    disable:  window.innerWidth < 768, /* evita overflow horizontal en móvil por fade-left/right */
   });
 }
 
