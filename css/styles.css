@@ -33,7 +33,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  overflow-x: hidden; /* evita scroll horizontal por AOS fade-left/right y fixed drawer */
+  overflow-x: clip; /* clip corta overflow sin crear scroll container ni forzar overflow-y:auto */
 }
 
 body {
