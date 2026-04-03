@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
   _swiperTestimonios = _crearSwiperTestimonios();
   initContadores();
   cargarFeedSocial();
+  cargarConsejos();
   marcarNavActivo();
 });
 
@@ -330,6 +331,45 @@ async function cargarFeedSocial() {
       `;
     }
   }
+}
+
+
+/* ── Consejos — últimos 3 en portada ────────────────────────── */
+async function cargarConsejos() {
+  const lista   = document.getElementById('consejos-lista');
+  const verMas  = document.getElementById('consejos-ver-mas');
+  if (!lista) return;
+
+  try {
+    const res  = await fetch('/api/consejos');
+    if (!res.ok) return;
+    const { items } = await res.json();
+    if (!items?.length) return;
+
+    const recientes = items.slice(0, 3);
+
+    lista.innerHTML = recientes.map(c => `
+      <a href="/consejos.html" class="consejo-card">
+        <div class="consejo-card__cat">${escHtml(c.categoria)}</div>
+        <div class="consejo-card__body">
+          <h3 class="consejo-card__titulo">${escHtml(c.titulo)}</h3>
+          <p class="consejo-card__resumen">${escHtml(c.resumen)}</p>
+        </div>
+        <div class="consejo-card__pie">
+          <span>${_formatFechaCorta(c.creado_en)}</span>
+          <span class="consejo-card__leer">Leer más →</span>
+        </div>
+      </a>
+    `).join('');
+
+    if (items.length > 3 && verMas) verMas.style.display = 'block';
+  } catch { /* sin conexión: sección permanece vacía */ }
+}
+
+function _formatFechaCorta(iso) {
+  try {
+    return new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso));
+  } catch { return ''; }
 }
 
 
