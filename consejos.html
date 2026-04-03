@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consejos de Cuidado — Fundación Hogar La Morenita</title>
+  <meta name="description" content="Consejos de gerontología y cuidado para adultos mayores. Fundación Hogar La Morenita, Cajicá.">
+  <link rel="icon" type="image/jpeg" href="/logoCasaMorenita.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primario:        #6b2d3e;
+      --primario-oscuro: #4a1f2b;
+      --primario-claro:  #f5e8eb;
+      --acento:          #c9956b;
+      --header-h:        64px;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background:
+        linear-gradient(135deg,
+          rgba(74,31,43,.09)  0%,
+          rgba(107,45,62,.05) 50%,
+          rgba(155,74,94,.09) 100%),
+        #fdf7f8;
+      color: #2d1a20;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .gal-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      background: rgba(253,247,248,.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(107,45,62,.12);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1.5rem;
+    }
+    .gal-header__back {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      color: var(--primario);
+      text-decoration: none;
+      font-size: .95rem;
+      transition: color .2s;
+    }
+    .gal-header__back:hover { color: var(--primario-oscuro); }
+    .gal-header__titulo { font-size: 1.1rem; font-weight: 700; flex: 1; }
+    .gal-header__contador { font-size: .85rem; color: rgba(107,45,62,.55); }
+
+    /* ── Filtros ── */
+    .gal-filtros {
+      display: flex;
+      gap: .5rem;
+      padding: 1rem 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: rgba(253,247,248,.88);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: var(--header-h);
+      z-index: 99;
+      border-bottom: 1px solid rgba(107,45,62,.08);
+    }
+    .gal-filtros::-webkit-scrollbar { display: none; }
+    .gal-filtro {
+      flex-shrink: 0;
+      padding: .4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(107,45,62,.25);
+      background: transparent;
+      color: rgba(107,45,62,.75);
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .gal-filtro:hover  { border-color: var(--primario); color: var(--primario); background: rgba(107,45,62,.06); }
+    .gal-filtro.activo { background: var(--primario); border-color: var(--primario); color: #fff; }
+
+    /* ── Grid de tarjetas ── */
+    .consejos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .consejo-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(107,45,62,.08);
+      border: 1px solid rgba(107,45,62,.08);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: box-shadow .25s ease, transform .25s ease;
+    }
+    .consejo-card:hover {
+      box-shadow: 0 8px 24px rgba(107,45,62,.16);
+      transform: translateY(-3px);
+    }
+
+    .consejo-card__categoria {
+      padding: .5rem 1rem;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      background: var(--primario-claro);
+      color: var(--primario);
+    }
+
+    .consejo-card__body {
+      padding: 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .consejo-card__titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1e0e14;
+      line-height: 1.4;
+    }
+
+    .consejo-card__resumen {
+      font-size: .9rem;
+      color: #5a3d45;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .consejo-card__footer {
+      padding: .9rem 1.25rem;
+      border-top: 1px solid rgba(107,45,62,.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: rgba(107,45,62,.55);
+    }
+
+    .consejo-card__leer {
+      color: var(--primario);
+      font-weight: 700;
+      font-size: .85rem;
+    }
+
+    /* ── Estado vacío ── */
+    .gal-estado {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      gap: 1rem;
+      color: rgba(107,45,62,.45);
+    }
+    .gal-estado svg { opacity: .35; }
+
+    /* ── Modal / Detalle ── */
+    .detalle-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(30,10,15,.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+      overflow-y: auto;
+    }
+    .detalle-overlay.abierto { display: flex; }
+
+    .detalle-caja {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 720px;
+      padding: 2.5rem;
+      position: relative;
+      box-shadow: 0 12px 48px rgba(0,0,0,.2);
+      margin: auto;
+    }
+
+    .detalle-cerrar {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--primario-claro);
+      border: none;
+      color: var(--primario);
+      font-size: 1.4rem;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background .2s;
+    }
+    .detalle-cerrar:hover { background: rgba(107,45,62,.2); }
+
+    .detalle-categoria {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--primario);
+      margin-bottom: .75rem;
+    }
+
+    .detalle-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #1e0e14;
+      line-height: 1.35;
+      margin-bottom: 1.25rem;
+    }
+
+    .detalle-contenido {
+      font-size: .975rem;
+      line-height: 1.8;
+      color: #3a2028;
+      white-space: pre-wrap;
+    }
+
+    .detalle-fecha {
+      margin-top: 1.5rem;
+      font-size: .8rem;
+      color: rgba(107,45,62,.5);
+    }
+
+    @media (max-width: 480px) {
+      .consejos-grid { grid-template-columns: 1fr; padding: 1rem; }
+      .detalle-caja  { padding: 1.5rem; }
+      .detalle-titulo { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="gal-header">
+  <a href="/" class="gal-header__back">
+    <svg viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Volver al sitio
+  </a>
+  <span class="gal-header__titulo">Consejos de Cuidado</span>
+  <span class="gal-header__contador" id="contador"></span>
+</header>
+
+<!-- Filtros -->
+<div class="gal-filtros" id="filtros">
+  <button class="gal-filtro activo" data-cat="todas">Todos</button>
+</div>
+
+<!-- Grid -->
+<div class="consejos-grid" id="grid"></div>
+
+<!-- Estado -->
+<div class="gal-estado" id="estado">
+  <svg viewBox="0 0 24 24" width="64" fill="#6b2d3e"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+  <p>Cargando consejos...</p>
+</div>
+
+<!-- Modal detalle -->
+<div class="detalle-overlay" id="detalle">
+  <div class="detalle-caja">
+    <button class="detalle-cerrar" id="det-cerrar">×</button>
+    <p class="detalle-categoria" id="det-categoria"></p>
+    <h1 class="detalle-titulo" id="det-titulo"></h1>
+    <div class="detalle-contenido" id="det-contenido"></div>
+    <p class="detalle-fecha" id="det-fecha"></p>
+  </div>
+</div>
+
+<script>
+  var todosLosConsejos = [];
+  var visibles         = [];
+  var catActual        = 'todas';
+
+  var grid     = document.getElementById('grid');
+  var filtros  = document.getElementById('filtros');
+  var estado   = document.getElementById('estado');
+  var contador = document.getElementById('contador');
+  var detalle  = document.getElementById('detalle');
+
+  function escHtml(s) {
+    return String(s || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function formatFecha(iso) {
+    try {
+      return new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
+    } catch { return iso || ''; }
+  }
+
+  function renderizar(cat) {
+    catActual = cat;
+    visibles  = cat === 'todas' ? todosLosConsejos : todosLosConsejos.filter(c => c.categoria === cat);
+
+    document.querySelectorAll('.gal-filtro').forEach(b =>
+      b.classList.toggle('activo', b.dataset.cat === cat)
+    );
+
+    contador.textContent = visibles.length + ' consejo' + (visibles.length !== 1 ? 's' : '');
+
+    if (!visibles.length) {
+      grid.innerHTML = '';
+      estado.innerHTML = '<svg viewBox="0 0 24 24" width="64" fill="#6b2d3e"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg><p>No hay consejos en esta categoría.</p>';
+      estado.style.display = 'flex';
+      return;
+    }
+
+    estado.style.display = 'none';
+    grid.innerHTML = visibles.map((c, i) => `
+      <div class="consejo-card" data-idx="${i}">
+        <div class="consejo-card__categoria">${escHtml(c.categoria)}</div>
+        <div class="consejo-card__body">
+          <h2 class="consejo-card__titulo">${escHtml(c.titulo)}</h2>
+          <p class="consejo-card__resumen">${escHtml(c.resumen)}</p>
+        </div>
+        <div class="consejo-card__footer">
+          <span>${formatFecha(c.creado_en)}</span>
+          <span class="consejo-card__leer">Leer más →</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function abrirDetalle(idx) {
+    var c = visibles[idx];
+    if (!c.contenido) {
+      /* cargar contenido completo si no lo tenemos */
+      fetch('/api/consejos/' + c.id)
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.consejo) {
+            c.contenido = d.consejo.contenido;
+            mostrarDetalle(c);
+          }
+        });
+    } else {
+      mostrarDetalle(c);
+    }
+  }
+
+  function mostrarDetalle(c) {
+    document.getElementById('det-categoria').textContent  = c.categoria;
+    document.getElementById('det-titulo').textContent     = c.titulo;
+    document.getElementById('det-contenido').textContent  = c.contenido;
+    document.getElementById('det-fecha').textContent      = 'Publicado el ' + formatFecha(c.creado_en);
+    detalle.classList.add('abierto');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarDetalle() {
+    detalle.classList.remove('abierto');
+    document.body.style.overflow = '';
+  }
+
+  /* Eventos */
+  grid.addEventListener('click', function(e) {
+    var card = e.target.closest('.consejo-card');
+    if (card) abrirDetalle(Number(card.dataset.idx));
+  });
+
+  filtros.addEventListener('click', function(e) {
+    var btn = e.target.closest('.gal-filtro');
+    if (btn) renderizar(btn.dataset.cat);
+  });
+
+  document.getElementById('det-cerrar').addEventListener('click', cerrarDetalle);
+
+  detalle.addEventListener('click', function(e) {
+    if (e.target === detalle) cerrarDetalle();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') cerrarDetalle();
+  });
+
+  /* Cargar */
+  fetch('/api/consejos')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      todosLosConsejos = d.items || [];
+
+      var cats = [];
+      todosLosConsejos.forEach(function(c) {
+        if (c.categoria && cats.indexOf(c.categoria) === -1) cats.push(c.categoria);
+      });
+      cats.forEach(function(cat) {
+        var btn = document.createElement('button');
+        btn.className   = 'gal-filtro';
+        btn.dataset.cat = cat;
+        btn.textContent = cat;
+        filtros.appendChild(btn);
+      });
+
+      renderizar('todas');
+    })
+    .catch(function() {
+      estado.innerHTML = '<svg viewBox="0 0 24 24" width="64" fill="#6b2d3e"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><p>No se pudieron cargar los consejos.</p>';
+      estado.style.display = 'flex';
+    });
+</script>
+</body>
+</html>

@@ -63,6 +63,7 @@ fastify.register(require('./routes/actividades'),   { prefix: '/api' });
 fastify.register(require('./routes/configuracion'), { prefix: '/api' });
 fastify.register(require('./routes/testimonios'),   { prefix: '/api' });
 fastify.register(require('./routes/admin'),         { prefix: '/api' });
+fastify.register(require('./routes/consejos'),     { prefix: '/api' });
 
 /* ── Health check ────────────────────────────────────────────── */
 fastify.get('/api/health', async () => ({ ok: true, ts: new Date().toISOString() }));

@@ -48,6 +48,11 @@ function adminApp() {
     testimonioForm:       { nombre: '', cargo: 'Familiar de residente', texto: '', orden: 0 },
     testimonioEditando:   null,
 
+    /* ── Consejos / Blog ── */
+    consejos:          [],
+    consejoForm:       { titulo: '', resumen: '', contenido: '', categoria: 'Cuidado General' },
+    consejoEditando:   null,
+
     /* ── Modal confirmación ── */
     modal: { abierto: false, titulo: '', mensaje: '', confirmar: () => {} },
 
@@ -168,6 +173,7 @@ function adminApp() {
         case 'mensajes':     await this.cargarMensajes();     break;
         case 'configuracion': await this.cargarConfig();      break;
         case 'testimonios':  await this.cargarTestimonios();  break;
+        case 'consejos':     await this.cargarConsejos();     break;
         case 'modulos':      break;
       }
     },
@@ -534,6 +540,67 @@ function adminApp() {
           this.mostrarToast('Testimonio eliminado.', 'exito');
           await this.cargarTestimonios();
           await this.cargarStats();
+        }
+      } catch { this.mostrarToast('Error al eliminar.', 'error'); }
+    },
+
+
+    /* ══════════════════════════════════════
+       CONSEJOS / BLOG
+    ══════════════════════════════════════ */
+    async cargarConsejos() {
+      try {
+        const r = await this.req('GET', '/admin/consejos');
+        if (r.ok) this.consejos = r.items;
+      } catch { this.mostrarToast('Error cargando consejos.', 'error'); }
+    },
+
+    async guardarConsejo() {
+      this.cargando = true;
+      try {
+        let r;
+        if (this.consejoEditando) {
+          r = await this.req('PUT', `/admin/consejos/${this.consejoEditando}`, this.consejoForm);
+        } else {
+          r = await this.req('POST', '/admin/consejos', this.consejoForm);
+        }
+        if (r.ok) {
+          this.mostrarToast(this.consejoEditando ? 'Consejo actualizado.' : 'Consejo publicado.', 'exito');
+          this.cancelarEdicionConsejo();
+          await this.cargarConsejos();
+        } else {
+          this.mostrarToast(r.error || 'Error al guardar.', 'error');
+        }
+      } catch { this.mostrarToast('Error al guardar.', 'error'); }
+      finally { this.cargando = false; }
+    },
+
+    editarConsejo(c) {
+      this.consejoEditando = c.id;
+      this.consejoForm = { titulo: c.titulo, resumen: c.resumen, contenido: c.contenido, categoria: c.categoria };
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    cancelarEdicionConsejo() {
+      this.consejoEditando = null;
+      this.consejoForm = { titulo: '', resumen: '', contenido: '', categoria: 'Cuidado General' };
+    },
+
+    confirmarEliminarConsejo(c) {
+      this.modal = {
+        abierto:   true,
+        titulo:    'Eliminar consejo',
+        mensaje:   `¿Eliminar "${c.titulo}"? Esta acción no se puede deshacer.`,
+        confirmar: () => this.eliminarConsejo(c.id),
+      };
+    },
+
+    async eliminarConsejo(id) {
+      try {
+        const r = await this.req('DELETE', `/admin/consejos/${id}`);
+        if (r.ok) {
+          this.mostrarToast('Consejo eliminado.', 'exito');
+          await this.cargarConsejos();
         }
       } catch { this.mostrarToast('Error al eliminar.', 'error'); }
     },

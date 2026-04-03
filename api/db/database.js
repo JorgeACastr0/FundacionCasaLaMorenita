@@ -71,14 +71,24 @@ function inicializar(db) {
       orden       INTEGER NOT NULL DEFAULT 0,
       creado_en   TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
     );
+
+    CREATE TABLE IF NOT EXISTS consejos (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      titulo      TEXT    NOT NULL,
+      resumen     TEXT    NOT NULL,
+      contenido   TEXT    NOT NULL,
+      categoria   TEXT    NOT NULL DEFAULT 'Cuidado General',
+      activo      INTEGER NOT NULL DEFAULT 1,
+      creado_en   TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+    );
   `);
 
   // Configuración por defecto
   const insConf = db.prepare(
     `INSERT OR IGNORE INTO configuracion (clave, valor) VALUES (?, ?)`
   );
-  insConf.run('facebook_url',  'https://www.facebook.com/');
-  insConf.run('instagram_url', 'https://www.instagram.com/');
+  insConf.run('facebook_url',  'https://www.facebook.com/profile.php?id=100087255922980');
+  insConf.run('instagram_url', 'https://www.instagram.com/hogar_casa_la_morenita/');
   insConf.run('tiktok_url',    'https://www.tiktok.com/');
   insConf.run('whatsapp_num',  '573146403147');
 }

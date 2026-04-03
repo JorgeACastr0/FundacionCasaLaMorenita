@@ -41,6 +41,9 @@ jobs:
             cd "$APP/api"
             npm install --omit=dev --silent
 
+            echo "→ Ejecutando migraciones..."
+            node "$APP/api/migrate.js"
+
             echo "→ Reiniciando API..."
             pm2 restart casalamorenita-api
 

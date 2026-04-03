@@ -100,6 +100,10 @@
                 Testimonios
                 <span class="badge badge--gris" x-show="stats.testimonios_total" x-text="stats.testimonios_total"></span>
             </button>
+            <button @click="cambiarVista('consejos')" :class="{ activo: vista === 'consejos' }">
+                <svg viewBox="0 0 24 24" width="20"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="currentColor"/></svg>
+                Consejos
+            </button>
             <button @click="cambiarVista('modulos')" :class="{ activo: vista === 'modulos' }">
                 <svg viewBox="0 0 24 24" width="20"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="currentColor"/></svg>
                 Módulos
@@ -568,6 +572,94 @@
             </section>
 
 
+            <!-- ══════════ CONSEJOS / BLOG ══════════ -->
+            <section x-show="vista === 'consejos'">
+                <div class="dos-columnas">
+                    <!-- Formulario -->
+                    <div class="card">
+                        <h3 x-text="consejoEditando ? 'Editar consejo' : 'Nuevo consejo'"></h3>
+                        <form @submit.prevent="guardarConsejo()">
+                            <div class="campo">
+                                <label>Título *</label>
+                                <input type="text" x-model="consejoForm.titulo"
+                                    placeholder="Ej: Cómo estimular la memoria en adultos mayores" required maxlength="150">
+                            </div>
+                            <div class="campo">
+                                <label>Categoría</label>
+                                <select x-model="consejoForm.categoria">
+                                    <option>Cuidado General</option>
+                                    <option>Alzheimer</option>
+                                    <option>Parkinson</option>
+                                    <option>Nutrición</option>
+                                    <option>Actividad Física</option>
+                                    <option>Salud Mental</option>
+                                    <option>Gerontología</option>
+                                </select>
+                            </div>
+                            <div class="campo">
+                                <label>Resumen * <span class="opcional">(se muestra en la tarjeta)</span></label>
+                                <textarea x-model="consejoForm.resumen" rows="3"
+                                    placeholder="Breve descripción del consejo (máx. 300 caracteres)..."
+                                    required maxlength="300"></textarea>
+                                <span class="opcional" x-text="(consejoForm.resumen?.length ?? 0) + '/300'"></span>
+                            </div>
+                            <div class="campo">
+                                <label>Contenido completo *</label>
+                                <textarea x-model="consejoForm.contenido" rows="10"
+                                    placeholder="Desarrolla aquí el consejo en detalle..."
+                                    required maxlength="5000"></textarea>
+                                <span class="opcional" x-text="(consejoForm.contenido?.length ?? 0) + '/5000'"></span>
+                            </div>
+                            <div class="form-acciones">
+                                <button type="submit" class="btn-primario" :disabled="cargando">
+                                    <span x-text="consejoEditando ? 'Guardar cambios' : 'Publicar consejo'"></span>
+                                </button>
+                                <button type="button" class="btn-ghost" @click="cancelarEdicionConsejo()" x-show="consejoEditando">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Lista de consejos -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Publicados (<span x-text="consejos.length"></span>)</h3>
+                            <a href="/consejos.html" target="_blank" class="btn-ghost" style="font-size:.8rem">
+                                Ver página pública ↗
+                            </a>
+                        </div>
+                        <div class="lista-actividades">
+                            <template x-for="c in consejos" :key="c.id">
+                                <div class="actividad-item">
+                                    <div class="actividad-item__fecha"
+                                         style="min-width:42px;width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;text-align:center;background:var(--color-primario-claro,#f0e6d3);color:var(--color-primario,#8B5E3C);line-height:1.2;padding:4px"
+                                         x-text="c.categoria.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase()">
+                                    </div>
+                                    <div class="actividad-item__info" style="flex:1;min-width:0">
+                                        <strong x-text="c.titulo"></strong>
+                                        <p class="texto-claro" style="font-size:.8rem" x-text="c.categoria"></p>
+                                        <p style="font-size:.82rem;color:#555;margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical" x-text="c.resumen"></p>
+                                    </div>
+                                    <div class="actividad-item__acciones">
+                                        <button @click="editarConsejo(c)" class="btn-icono btn-icono--azul" title="Editar">
+                                            <svg viewBox="0 0 24 24" width="16"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
+                                        </button>
+                                        <button @click="confirmarEliminarConsejo(c)" class="btn-icono btn-icono--rojo" title="Eliminar">
+                                            <svg viewBox="0 0 24 24" width="16"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="card-vacio" x-show="consejos.length === 0">
+                                <p>Aún no hay consejos publicados. Escribe el primero.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
             <!-- ══════════ CONFIGURACIÓN ══════════ -->
             <section x-show="vista === 'configuracion'">
                 <div class="card">
@@ -735,7 +827,7 @@
                            onclick="(function(){
                                var txt=document.getElementById('mod-descripcion').value.trim();
                                if(!txt){alert('Describe primero qué necesitas.');return false;}
-                               window.open('https://api.whatsapp.com/send?phone=573146403147&text='+encodeURIComponent('Hola, soy cliente de la plataforma y quisiera solicitar la siguiente funcionalidad:\n\n'+txt),'_blank');
+                               window.open('https://api.whatsapp.com/send?phone=573125827078&text='+encodeURIComponent('Hola, soy cliente de la plataforma y quisiera solicitar la siguiente funcionalidad:\n\n'+txt),'_blank');
                            })()"
                            style="background:#25d366;color:#fff;padding:.7rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.95rem;display:inline-flex;align-items:center;gap:.4rem">
                             Enviar por WhatsApp
@@ -744,7 +836,7 @@
                            onclick="(function(){
                                var txt=document.getElementById('mod-descripcion').value.trim();
                                if(!txt){alert('Describe primero qué necesitas.');return false;}
-                               window.location.href='mailto:soporte@tudominio.com?subject=Solicitud%20de%20funcionalidad&body='+encodeURIComponent(txt);
+                               window.location.href='mailto:jorgeacastro.dev@gmail.com?subject=Solicitud%20de%20funcionalidad&body='+encodeURIComponent(txt);
                            })()"
                            style="background:#f4f4f4;color:#333;padding:.7rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.95rem">
                             Enviar por correo
