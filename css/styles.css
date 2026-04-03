@@ -44,9 +44,6 @@ body {
   /* overflow-x: hidden NO se aplica en body para no romper position:fixed en iOS Safari */
 }
 
-main {
-  overflow-x: hidden; /* contiene overflow de animaciones AOS fade-left/right */
-}
 
 /* Touch: eliminar delay de 300ms en iOS y activar tap en todos los interactivos */
 a, button, [role="button"], input, select, textarea, label {

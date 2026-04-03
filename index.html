@@ -772,11 +772,13 @@
       var btn  = document.querySelector('.whatsapp-float');
       if (!hero || !btn) return;
 
-      var observer = new IntersectionObserver(function (entries) {
-        btn.classList.toggle('wa-visible', !entries[0].isIntersecting);
-      }, { threshold: 0.1 });
+      function checkWA() {
+        /* getBoundingClientRect().bottom <= 0 → el hero está completamente fuera del viewport por arriba */
+        btn.classList.toggle('wa-visible', hero.getBoundingClientRect().bottom <= 0);
+      }
 
-      observer.observe(hero);
+      window.addEventListener('scroll', checkWA, { passive: true });
+      checkWA(); /* verificar estado inicial */
     })();
     </script>
 
